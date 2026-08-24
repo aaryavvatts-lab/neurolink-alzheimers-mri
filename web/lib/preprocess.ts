@@ -57,6 +57,89 @@ export function resize(src: Gray, nw: number, nh: number): Gray {
   return { data: out, w: nw, h: nh };
 }
 
+/**
+ * Area-averaging downsample — the equivalent of OpenCV's INTER_AREA.
+ *
+ * Python downscales with INTER_AREA, which averages every input pixel falling
+ * inside an output pixel's footprint. Bilinear instead samples two points and
+ * ignores the rest, so when shrinking by more than 2x it aliases and produces
+ * visibly different values. Using bilinear here made the browser's tensor
+ * diverge from the training pipeline (correlation ~0.995 instead of ~1.000).
+ */
+export function resizeArea(src: Gray, nw: number, nh: number): Gray {
+  const out = new Float32Array(nw * nh);
+  const sx = src.w / nw;
+  const sy = src.h / nh;
+  for (let y = 0; y < nh; y++) {
+    const y0 = y * sy;
+    const y1 = (y + 1) * sy;
+    const iy0 = Math.floor(y0);
+    const iy1 = Math.min(src.h, Math.ceil(y1));
+    for (let x = 0; x < nw; x++) {
+      const x0 = x * sx;
+      const x1 = (x + 1) * sx;
+      const ix0 = Math.floor(x0);
+      const ix1 = Math.min(src.w, Math.ceil(x1));
+      let acc = 0;
+      let wsum = 0;
+      for (let yy = iy0; yy < iy1; yy++) {
+        const wy = Math.min(yy + 1, y1) - Math.max(yy, y0);
+        if (wy <= 0) continue;
+        for (let xx = ix0; xx < ix1; xx++) {
+          const wx = Math.min(xx + 1, x1) - Math.max(xx, x0);
+          if (wx <= 0) continue;
+          const w = wx * wy;
+          acc += src.data[yy * src.w + xx] * w;
+          wsum += w;
+        }
+      }
+      out[y * nw + x] = wsum > 0 ? acc / wsum : 0;
+    }
+  }
+  return { data: out, w: nw, h: nh };
+}
+
+/** Catmull-Rom style cubic kernel with a = -0.75, matching OpenCV's INTER_CUBIC. */
+function cubicWeights(t: number): [number, number, number, number] {
+  const a = -0.75;
+  const w0 = ((a * (t + 1) - 5 * a) * (t + 1) + 8 * a) * (t + 1) - 4 * a;
+  const w1 = ((a + 2) * t - (a + 3)) * t * t + 1;
+  const t2 = 1 - t;
+  const w2 = ((a + 2) * t2 - (a + 3)) * t2 * t2 + 1;
+  const t3 = 2 - t;
+  const w3 = ((a * t3 - 5 * a) * t3 + 8 * a) * t3 - 4 * a;
+  return [w0, w1, w2, w3];
+}
+
+/** Bicubic resample — OpenCV's INTER_CUBIC, used for the un-squash step. */
+export function resizeCubic(src: Gray, nw: number, nh: number): Gray {
+  const out = new Float32Array(nw * nh);
+  const sx = src.w / nw;
+  const sy = src.h / nh;
+  const clamp = (v: number, hi: number) => (v < 0 ? 0 : v > hi ? hi : v);
+  for (let y = 0; y < nh; y++) {
+    const fy = (y + 0.5) * sy - 0.5;
+    const iy = Math.floor(fy);
+    const wy = cubicWeights(fy - iy);
+    for (let x = 0; x < nw; x++) {
+      const fx = (x + 0.5) * sx - 0.5;
+      const ix = Math.floor(fx);
+      const wx = cubicWeights(fx - ix);
+      let acc = 0;
+      for (let j = 0; j < 4; j++) {
+        const yy = clamp(iy - 1 + j, src.h - 1);
+        let row = 0;
+        for (let i = 0; i < 4; i++) {
+          row += wx[i] * src.data[yy * src.w + clamp(ix - 1 + i, src.w - 1)];
+        }
+        acc += wy[j] * row;
+      }
+      out[y * nw + x] = acc;
+    }
+  }
+  return { data: out, w: nw, h: nh };
+}
+
 function blur5(src: Gray): Gray {
   const { w, h } = src;
   const tmp = new Float32Array(w * h);
@@ -209,6 +292,10 @@ export function headMask(g: Gray): Uint8Array {
   return filled;
 }
 
+/** Resolution of the cached training images (slices_224.npy). The browser must
+ *  pass through this size to reproduce the training pipeline exactly. */
+export const CACHE_SIZE = 224;
+
 export interface Preprocessed {
   gray: Float32Array;   // size*size, 0..255 (for display)
   tensor: Float32Array; // 3*size*size, normalised (for the model)
@@ -219,8 +306,9 @@ export function preprocess(img: ImageData, size = 224, margin = 0.04, mean = 0.4
   const g0 = toGray(img);
 
   // Un-squash: the raw files are 496x248, a 248x248 slice stretched 2x wide.
+  // Bicubic, to match cv2.INTER_CUBIC in preprocess.py.
   const side = Math.max(g0.w, g0.h);
-  const sq = g0.w === g0.h ? g0 : resize(g0, side, side);
+  const sq = g0.w === g0.h ? g0 : resizeCubic(g0, side, side);
 
   const mask = headMask(sq);
 
@@ -265,7 +353,11 @@ export function preprocess(img: ImageData, size = 224, margin = 0.04, mean = 0.4
     normed[i] = Math.min(1, Math.max(0, (crop[i] - lo) / (hi - lo))) * 255;
   }
 
-  const final = resize({ data: normed, w: cw, h: ch }, size, size);
+  // Python resizes the crop to the 224 cache with INTER_AREA, then downsamples
+  // 224 -> `size` bilinearly on the GPU. Reproduce BOTH steps: going straight
+  // to `size` gives a measurably different tensor.
+  const cached = resizeArea({ data: normed, w: cw, h: ch }, CACHE_SIZE, CACHE_SIZE);
+  const final = size === CACHE_SIZE ? cached : resize(cached, size, size);
   const gray = new Float32Array(size * size);
   for (let i = 0; i < gray.length; i++) gray[i] = Math.round(final.data[i]);
 

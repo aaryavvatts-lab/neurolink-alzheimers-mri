@@ -1,0 +1,55 @@
+{
+  "arch": "resnet18",
+  "input_size": 160,
+  "mean": 0.449,
+  "std": 0.226,
+  "classes": [
+    "Non Demented",
+    "Very mild Dementia",
+    "Mild Dementia",
+    "Moderate Dementia"
+  ],
+  "cdr": [
+    0.0,
+    0.5,
+    1.0,
+    2.0
+  ],
+  "model_file": "neurolink.onnx",
+  "preprocessing": {
+    "note": "Must match src/neurolink/data/preprocess.py exactly.",
+    "steps": [
+      "grayscale",
+      "resize to square (undo 2x horizontal stretch)",
+      "head bounding-box crop with 4% margin",
+      "percentile clip 1-99 inside head mask",
+      "resize to 224px then 160px",
+      "scale to [0,1], subtract mean, divide by std, repeat to 3 channels"
+    ],
+    "crop_margin": 0.04,
+    "clip_percentiles": [
+      1.0,
+      99.0
+    ]
+  },
+  "parity": {
+    "fp32": {
+      "max_abs_logit_diff": 4.76837158203125e-05,
+      "mean_abs_logit_diff": 9.574362593411934e-06,
+      "argmax_agreement": 1.0,
+      "cam_correlation": 0.9999999999701334,
+      "size_mb": 44.72
+    },
+    "int8": {
+      "max_abs_logit_diff": 2.8267784118652344,
+      "mean_abs_logit_diff": 0.5863946676254272,
+      "argmax_agreement": 0.925,
+      "cam_correlation": 0.9405476045661024,
+      "size_mb": 11.24
+    }
+  },
+  "checkpoint": {
+    "val_balanced_accuracy": 0.8350974386886895,
+    "epoch": 1
+  }
+}

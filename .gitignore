@@ -29,3 +29,7 @@ web/public/ort/
 
 # OS
 .DS_Store
+
+# Preprocessing-parity fixtures are derived from the dataset (raw pixel dumps).
+# Regenerate with: python -m src.neurolink.dump_parity_fixtures
+web/test/fixtures/
