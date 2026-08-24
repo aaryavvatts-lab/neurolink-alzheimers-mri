@@ -88,6 +88,9 @@ def main() -> None:
                     help="subsample the test set. Keep at 1 for reported results; >1 is smoke-test only")
     ap.add_argument("--seed", type=int, default=1337)
     ap.add_argument("--mask-mode", default=None, choices=[None, "brain_removed", "brain_only"])
+    ap.add_argument("--class-weight-mode", default="inverse", choices=["inverse", "none"],
+                    help=("'inverse' also weights the loss by inverse frequency on top of the "
+                          "balanced sampler; 'none' lets the sampler do the balancing alone"))
     ap.add_argument("--no-pretrained", action="store_true")
     ap.add_argument("--patience", type=int, default=4)
     ap.add_argument("--tag", default=None)
@@ -166,9 +169,22 @@ def main() -> None:
     n_par = sum(p.numel() for p in model.parameters()) / 1e6
     print(f"model {args.model} ({n_par:.1f}M params) on {device} at {args.train_size}px")
 
-    # Mild class weighting on top of the sampler: the sampler fixes the marginal,
-    # the weights keep rare-class errors expensive.
-    cw = torch.as_tensor((inv / inv[inv > 0].mean()).clip(0.5, 3.0), dtype=torch.float32, device=device)
+    # Class weighting on top of the sampler is a DOUBLE correction, and on this
+    # dataset it is a strong one. The sampler already makes each class ~25% of
+    # every batch; inverse-frequency weights then give Moderate Dementia 6x the
+    # gradient weight of every other class -- a class with exactly ONE training
+    # subject, resampled about 5,000 times per epoch. That pushes the model to
+    # memorise one person and over-predict the rarest, most severe stage.
+    #
+    # 'none' leaves the balancing to the sampler alone. Kept configurable, and
+    # defaulting to 'inverse', so runs already completed stay reproducible.
+    if args.class_weight_mode == "none":
+        cw = torch.ones(N_CLASSES, dtype=torch.float32, device=device)
+    else:
+        cw = torch.as_tensor((inv / inv[inv > 0].mean()).clip(0.5, 3.0),
+                             dtype=torch.float32, device=device)
+    print(f"class-weight mode '{args.class_weight_mode}': "
+          f"{[round(float(v), 2) for v in cw]}")
     crit = nn.CrossEntropyLoss(weight=cw, label_smoothing=args.label_smoothing)
     opt = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     steps = max(1, len(tr_dl)) * args.epochs
@@ -234,6 +250,7 @@ def main() -> None:
         "tag": tag, "model": args.model, "split_mode": args.split_mode,
         "fold": args.fold if args.split_mode == "fold" else None,
         "mask_mode": args.mask_mode, "leaking_split": leaking,
+        "class_weight_mode": args.class_weight_mode,
         "test_stride": args.test_stride,
         "best_epoch": best_epoch, "epochs_run": len(history),
         "minutes": round((time.time() - t0) / 60, 2),
