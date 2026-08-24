@@ -37,6 +37,22 @@ export function Note({ children, tone = "info" }: { children: React.ReactNode; t
   return <div className={`rounded-lg border px-4 py-3 text-sm leading-relaxed ${map}`}>{children}</div>;
 }
 
+/** Renders a generated figure, and disappears if that figure does not exist.
+ *  Report steps are optional, so a missing PNG must not leave a broken image. */
+export function Figure({ src, caption }: { src: string; caption: string }) {
+  const [ok, setOk] = React.useState(true);
+  if (!ok) return null;
+  return (
+    <figure className="card overflow-hidden">
+      <div className="bg-white p-2">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={src} alt={caption} className="w-full" onError={() => setOk(false)} />
+      </div>
+      <figcaption className="px-4 py-3 text-xs leading-relaxed text-muted">{caption}</figcaption>
+    </figure>
+  );
+}
+
 export function ConfusionMatrix({ cm, names, caption }: {
   cm: number[][]; names: string[]; caption?: string;
 }) {

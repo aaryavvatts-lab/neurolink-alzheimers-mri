@@ -1,6 +1,6 @@
 "use client";
 import type { Results } from "@/lib/types";
-import { Bar, Note, Stat } from "./ui";
+import { Bar, Figure, Note, Stat } from "./ui";
 
 export default function Explain({ r }: { r: Results }) {
   const cam = r.cam_ventricle_overlap;
@@ -59,6 +59,11 @@ export default function Explain({ r }: { r: Results }) {
       ) : (
         <Note>The attention-overlap analysis has not been run yet.</Note>
       )}
+
+      <Figure
+        src="/figures/cam_ventricles.png"
+        caption="One row per stage. Left to right: the slice, the derived ventricle mask, the model's most-activated region at matching area, and the two overlaid — red is attention, green is ventricles, yellow is agreement. Ventricle area grows with disease stage, which is the structural signal the model is meant to find."
+      />
 
       {probe && (
         <div className="card p-5">

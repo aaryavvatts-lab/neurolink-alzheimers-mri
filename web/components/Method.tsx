@@ -1,6 +1,6 @@
 "use client";
 import type { Results } from "@/lib/types";
-import { Note } from "./ui";
+import { Figure, Note } from "./ui";
 
 const STEPS = [
   { n: 1, t: "Grayscale", d: "Files are stored 3-channel but the channels are byte-identical — verified across 200 random files. MRI is single-channel intensity data." },
@@ -57,6 +57,11 @@ export default function Method({ r }: { r: Results }) {
         </p>
       </div>
 
+      <Figure
+        src="/figures/dataset_overview.png"
+        caption="The same dataset counted two ways. The left chart is what the folder looks like; the right is how many people it actually represents."
+      />
+
       <div className="card p-5">
         <p className="mb-4 text-sm font-medium text-white">Preprocessing</p>
         <ol className="space-y-3">
@@ -73,6 +78,11 @@ export default function Method({ r }: { r: Results }) {
           ))}
         </ol>
       </div>
+
+      <Figure
+        src="/figures/preprocessing_probe.png"
+        caption="Each row is one scan through the pipeline: raw 496×248 file, un-squashed to square, the detected head bounding box, and the final normalised input. Note how much rounder the brains become once the 2× horizontal stretch is undone."
+      />
 
       <div className="card p-5">
         <p className="mb-2 text-sm font-medium text-white">Splitting, and the guard that enforces it</p>
