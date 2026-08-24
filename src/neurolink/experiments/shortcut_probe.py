@@ -19,6 +19,7 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+from .. import jsonio
 
 REPO = Path(__file__).resolve().parents[3]
 
@@ -58,7 +59,7 @@ def main() -> None:
         "chance_level": chance,
         "verdict": verdict,
     }
-    (REPO / "reports" / "shortcut_probe.json").write_text(json.dumps(out, indent=2))
+    jsonio.write(REPO / "reports" / "shortcut_probe.json", out)
     print(f"\n{'=' * 72}\nSHORTCUT PROBE (brain removed)\n{'=' * 72}")
     print(f"  subject-level balanced accuracy: {bal:.4f}  (chance = {chance:.2f})")
     print(f"  {verdict}")

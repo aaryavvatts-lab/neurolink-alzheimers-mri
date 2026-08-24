@@ -17,6 +17,7 @@ import pandas as pd
 from . import figures
 from .constants import CLASS_NAMES, SHORT_NAMES
 from .evaluate import evaluate_run
+from . import jsonio
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -106,7 +107,7 @@ def main() -> None:
         figures.reliability(d["probs"], d["y_true"], figures.FIG / "reliability.png")
 
     out = REPO / "reports" / "results.json"
-    out.write_text(json.dumps(results, indent=2))
+    jsonio.write(out, results)
 
     web = REPO / "web" / "public"
     if web.exists():

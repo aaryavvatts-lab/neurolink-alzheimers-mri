@@ -19,6 +19,7 @@ import json
 import subprocess
 import sys
 from pathlib import Path
+from .. import jsonio
 
 REPO = Path(__file__).resolve().parents[3]
 
@@ -84,7 +85,7 @@ def main() -> None:
         },
     }
     out = REPO / "reports" / "leakage_experiment.json"
-    out.write_text(json.dumps(comparison, indent=2))
+    jsonio.write(out, comparison)
 
     print(f"\n{'=' * 72}\nLEAKAGE EXPERIMENT — identical model, identical epochs\n{'=' * 72}")
     print(f"  random slice split (leaky)  balanced acc: "

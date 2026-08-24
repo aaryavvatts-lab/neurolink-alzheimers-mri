@@ -24,6 +24,7 @@ from .data.dataset import SliceDataset, to_model_input
 from .data.splits import assert_no_subject_leakage, random_slice_split, subject_holdout
 from .metrics import classification_metrics
 from .models.transfer import build_model
+from . import jsonio
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -242,7 +243,7 @@ def main() -> None:
         "n_test_subjects": int(mf.loc[te_m, "subject"].nunique()),
         "slice_level": tm, "history": history,
     }
-    (out_dir / "summary.json").write_text(json.dumps(summary, indent=2))
+    jsonio.write(out_dir / "summary.json", summary)
 
     print(f"\n--- {tag} test (slice level) ---")
     print(f"  accuracy          {tm['accuracy']:.4f}")

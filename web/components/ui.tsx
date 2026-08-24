@@ -85,15 +85,18 @@ export function ConfusionMatrix({ cm, names, caption }: {
 }
 
 export function Bar({ value, max = 1, tone = "accent", label, right }: {
-  value: number; max?: number; tone?: "accent" | "warn" | "good"; label: string; right?: string;
+  value: number | null; max?: number; tone?: "accent" | "warn" | "good"; label: string; right?: string;
 }) {
-  const pct = Math.max(0, Math.min(100, (value / max) * 100));
+  const v = value ?? 0;
+  const pct = Math.max(0, Math.min(100, (v / max) * 100));
   const bg = tone === "warn" ? "bg-warn" : tone === "good" ? "bg-good" : "bg-accent";
   return (
     <div className="space-y-1">
       <div className="flex justify-between text-xs">
         <span className="text-slate-300">{label}</span>
-        <span className="tabular-nums text-muted">{right ?? value.toFixed(3)}</span>
+        <span className="tabular-nums text-muted">
+          {right ?? (value === null ? "—" : value.toFixed(3))}
+        </span>
       </div>
       <div className="h-2 w-full rounded-full bg-line/60">
         <div className={`h-2 rounded-full ${bg}`} style={{ width: `${pct}%` }} />

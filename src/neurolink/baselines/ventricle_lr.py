@@ -27,6 +27,7 @@ from tqdm import tqdm
 from ..data.preprocess import unpack_masks
 from ..explain import ventricle_mask
 from ..metrics import aggregate_to_subjects, classification_metrics
+from .. import jsonio
 
 REPO = Path(__file__).resolve().parents[3]
 
@@ -102,7 +103,7 @@ def main() -> None:
         "coefficients_per_class": coefs.tolist(),
     }
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
-    Path(a.out).write_text(json.dumps(out, indent=2))
+    jsonio.write(Path(a.out), out)
 
     print(f"\n--- ventricle+morphometry logistic regression (subject-grouped split) ---")
     print(f"  slice-level   balanced acc {slice_m['balanced_accuracy']:.4f} | "

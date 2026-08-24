@@ -24,6 +24,7 @@ import torch
 from .constants import SHORT_NAMES
 from .data.dataset import MEAN, STD
 from .models.transfer import build_model
+from . import jsonio
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -95,7 +96,7 @@ def main() -> None:
                 "pytorch_pred": int(probs.argmax()),
             })
 
-    (out / "index.json").write_text(json.dumps(entries, indent=2))
+    jsonio.write(out / "index.json", entries)
     n_correct = sum(e["pytorch_pred"] == e["true_label"] for e in entries)
     print(f"Exported {len(entries)} held-out samples "
           f"({n_correct}/{len(entries)} correctly predicted) -> {out}")

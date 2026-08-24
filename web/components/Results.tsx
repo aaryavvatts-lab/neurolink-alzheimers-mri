@@ -1,6 +1,6 @@
 "use client";
 import type { Results, RunBlock } from "@/lib/types";
-import { SHORT } from "@/lib/types";
+import { SHORT, fmt } from "@/lib/types";
 import { Bar, ConfusionMatrix, Note, Stat } from "./ui";
 
 function MetricGrid({ run }: { run: RunBlock }) {
@@ -9,7 +9,7 @@ function MetricGrid({ run }: { run: RunBlock }) {
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       <Stat value={s.balanced_accuracy.toFixed(3)} label="Balanced accuracy (4 classes)" sub="chance = 0.250" />
       <Stat value={s.quadratic_kappa.toFixed(3)} label="Quadratic weighted kappa" sub="credits near-misses on an ordinal scale" />
-      <Stat value={s.binary_screening.roc_auc.toFixed(3)} label="ROC-AUC, any dementia vs none" sub="the screening question" />
+      <Stat value={fmt(s.binary_screening.roc_auc)} label="ROC-AUC, any dementia vs none" sub="the screening question" />
       <Stat value={`${s.n}`} label="Patients evaluated" sub="one prediction per person" />
     </div>
   );
@@ -35,7 +35,7 @@ export default function ResultsSection({ r }: { r: Results }) {
           </p>
           <div className="grid gap-3 sm:grid-cols-3">
             <Stat value={cv.pooled_subject_level.balanced_accuracy.toFixed(3)} label="Balanced accuracy, pooled out-of-fold" />
-            <Stat value={cv.pooled_subject_level.binary_screening.roc_auc.toFixed(3)} label="Binary screening ROC-AUC" />
+            <Stat value={fmt(cv.pooled_subject_level.binary_screening.roc_auc)} label="Binary screening ROC-AUC" />
             <Stat value={`±${cv.fold_spread.subject_balanced_accuracy_std.toFixed(3)}`}
               label="Std. dev. across folds"
               sub={`range ${cv.fold_spread.subject_balanced_accuracy_min.toFixed(3)}–${cv.fold_spread.subject_balanced_accuracy_max.toFixed(3)}`} />

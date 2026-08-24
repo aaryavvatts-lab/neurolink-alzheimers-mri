@@ -20,6 +20,7 @@ import numpy as np
 from .constants import SHORT_NAMES
 from .evaluate import evaluate_run
 from .metrics import aggregate_to_subjects, classification_metrics
+from . import jsonio
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -71,7 +72,7 @@ def main() -> None:
         "pooled_subject_level": subj_m,
     }
     p = REPO / "reports" / f"crossval_{a.model}.json"
-    p.write_text(json.dumps(out, indent=2))
+    jsonio.write(p, out)
 
     print(f"\n{'=' * 72}\nPOOLED {len(per_fold)}-FOLD OUT-OF-FOLD RESULT ({a.model})\n{'=' * 72}")
     print(f"  {len(SY)} subjects, {len(y):,} slices")

@@ -15,6 +15,7 @@ import numpy as np
 import torch
 
 from .constants import SHORT_NAMES
+from . import jsonio
 from .metrics import (
     abstention_curve, aggregate_to_subjects, classification_metrics,
     expected_calibration_error,
@@ -91,7 +92,7 @@ def evaluate_run(run_dir: Path) -> dict:
             for s, t, p in zip(SU, SY, SPc)
         ],
     }
-    (run_dir / "evaluation.json").write_text(json.dumps(out, indent=2))
+    jsonio.write(run_dir / "evaluation.json", out)
     return out
 
 

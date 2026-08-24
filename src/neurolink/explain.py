@@ -36,6 +36,7 @@ from .constants import SHORT_NAMES
 from .data.dataset import MEAN, STD
 from .metrics import dice_score, iou_score
 from .models.transfer import build_model
+from . import jsonio
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -216,7 +217,7 @@ def run(ckpt: Path, n_samples: int, size: int, top_frac: float, out_json: Path) 
         "explained by centre bias, not learned anatomy."
     )
     out_json.parent.mkdir(parents=True, exist_ok=True)
-    out_json.write_text(json.dumps(summary, indent=2))
+    jsonio.write(out_json, summary)
     df.to_csv(out_json.with_suffix(".csv"), index=False)
     return summary
 
@@ -298,5 +299,5 @@ if __name__ == "__main__":
     ap.add_argument("--figure", default=str(REPO / "reports" / "figures" / "cam_ventricles.png"))
     a = ap.parse_args()
     s = run(Path(a.ckpt), a.n, a.size, a.top_frac, Path(a.out))
-    print(json.dumps(s, indent=2))
+    print(jsonio.dumps(s, indent=2))
     render_figure(Path(a.ckpt), a.size, Path(a.figure))

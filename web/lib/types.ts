@@ -3,9 +3,12 @@ export interface ClassInfo {
   images: number; subjects: number; images_pct: number;
 }
 export interface PerClass { precision: number; recall: number; f1: number; support: number; }
+/** null = not measurable from this split (e.g. ROC-AUC when the test set holds
+ *  a single class). Distinct from 0, and rendered as an em dash. */
 export interface BinaryBlock {
-  accuracy: number; balanced_accuracy: number; sensitivity: number;
-  specificity: number; roc_auc: number; pr_auc: number; confusion_matrix: number[][];
+  accuracy: number; balanced_accuracy: number;
+  sensitivity: number | null; specificity: number | null;
+  roc_auc: number | null; pr_auc: number | null; confusion_matrix: number[][];
 }
 export interface Metrics {
   n: number; accuracy: number; balanced_accuracy: number; macro_f1: number;
@@ -19,7 +22,7 @@ export interface RunBlock {
   n_train_subjects: number; n_test_subjects: number;
   slice_level: Metrics; subject_level: Metrics;
   calibration: { temperature: number; ece_slice_uncalibrated: number; ece_slice_calibrated: number; ece_subject_calibrated: number };
-  abstention_subject: { coverage: number; accuracy: number; balanced_accuracy: number; min_confidence: number }[];
+  abstention_subject: { coverage: number; accuracy: number; balanced_accuracy: number | null; min_confidence: number }[];
   subject_predictions: { subject: string; true: number; pred: number; probs: number[] }[];
 }
 export interface Results {
@@ -57,5 +60,10 @@ export interface Results {
     pooled_slice_level: Metrics; pooled_subject_level: Metrics;
   };
 }
+/** Format a metric that may be unmeasurable. */
+export function fmt(v: number | null | undefined, digits = 3): string {
+  return v === null || v === undefined || Number.isNaN(v) ? "—" : v.toFixed(digits);
+}
+
 export const SHORT = ["Non", "Very mild", "Mild", "Moderate"];
 export const FULL = ["Non Demented", "Very mild Dementia", "Mild Dementia", "Moderate Dementia"];

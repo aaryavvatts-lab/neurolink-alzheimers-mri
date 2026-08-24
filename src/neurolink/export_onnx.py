@@ -27,6 +27,7 @@ import torch.nn.functional as F
 
 from .data.dataset import MEAN, STD
 from .models.transfer import build_model
+from . import jsonio
 
 REPO = Path(__file__).resolve().parents[2]
 
@@ -178,7 +179,7 @@ def main() -> None:
         "checkpoint": {"val_balanced_accuracy": state.get("val_balanced_accuracy"),
                        "epoch": state.get("epoch")},
     }
-    (out_dir / "model_meta.json").write_text(json.dumps(meta, indent=2))
+    jsonio.write(out_dir / "model_meta.json", meta)
     print(f"shipping {meta['model_file']} -> {out_dir}")
 
 
