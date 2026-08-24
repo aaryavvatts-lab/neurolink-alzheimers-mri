@@ -1,0 +1,1011 @@
+{
+  "stage": "TEST",
+  "dataset": {
+    "total_images": 86437,
+    "total_subjects": 347,
+    "slices_per_subject_median": 244,
+    "slice_index_range": [
+      100,
+      160
+    ],
+    "raw_resolution": "496x248",
+    "classes": [
+      {
+        "name": "Non Demented",
+        "short": "Non",
+        "cdr": 0.0,
+        "images": 67222,
+        "subjects": 266,
+        "images_pct": 77.8
+      },
+      {
+        "name": "Very mild Dementia",
+        "short": "Very mild",
+        "cdr": 0.5,
+        "images": 13725,
+        "subjects": 58,
+        "images_pct": 15.9
+      },
+      {
+        "name": "Mild Dementia",
+        "short": "Mild",
+        "cdr": 1.0,
+        "images": 5002,
+        "subjects": 21,
+        "images_pct": 5.8
+      },
+      {
+        "name": "Moderate Dementia",
+        "short": "Moderate",
+        "cdr": 2.0,
+        "images": 488,
+        "subjects": 2,
+        "images_pct": 0.6
+      }
+    ]
+  },
+  "runs": {
+    "_synthetic_check": {
+      "model": "resnet18",
+      "split_mode": "holdout",
+      "fold": null,
+      "mask_mode": null,
+      "leaking_split": false,
+      "minutes": 1.0,
+      "best_epoch": 3,
+      "n_train_subjects": 242,
+      "n_test_subjects": 53,
+      "slice_level": {
+        "n": 13664,
+        "accuracy": 0.7276785714285714,
+        "balanced_accuracy": 0.7198791671961706,
+        "macro_f1": 0.5330288149717402,
+        "quadratic_kappa": 0.33360622443613885,
+        "confusion_matrix": [
+          [
+            7656,
+            945,
+            969,
+            922
+          ],
+          [
+            192,
+            1583,
+            203,
+            218
+          ],
+          [
+            63,
+            70,
+            533,
+            66
+          ],
+          [
+            24,
+            26,
+            23,
+            171
+          ]
+        ],
+        "per_class": [
+          {
+            "precision": 0.9648393194706995,
+            "recall": 0.7296988181471598,
+            "f1": 0.8309545775221143,
+            "support": 10492
+          },
+          {
+            "precision": 0.6032774390243902,
+            "recall": 0.720856102003643,
+            "f1": 0.6568464730290456,
+            "support": 2196
+          },
+          {
+            "precision": 0.30844907407407407,
+            "recall": 0.7281420765027322,
+            "f1": 0.43333333333333335,
+            "support": 732
+          },
+          {
+            "precision": 0.12418300653594772,
+            "recall": 0.7008196721311475,
+            "f1": 0.21098087600246762,
+            "support": 244
+          }
+        ],
+        "collapsed_3class": {
+          "balanced_accuracy": 0.7543516400502677,
+          "macro_f1": 0.6254770960793338,
+          "confusion_matrix": [
+            [
+              7656,
+              945,
+              1891
+            ],
+            [
+              192,
+              1583,
+              421
+            ],
+            [
+              87,
+              96,
+              793
+            ]
+          ]
+        },
+        "binary_screening": {
+          "accuracy": 0.7720286885245902,
+          "balanced_accuracy": 0.8208708466523945,
+          "sensitivity": 0.9120428751576293,
+          "specificity": 0.7296988181471598,
+          "roc_auc": 0.9156204523088268,
+          "pr_auc": 0.8007067256370606,
+          "confusion_matrix": [
+            [
+              7656,
+              2836
+            ],
+            [
+              279,
+              2893
+            ]
+          ]
+        }
+      },
+      "subject_level": {
+        "n": 53,
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "macro_f1": 1.0,
+        "quadratic_kappa": 1.0,
+        "confusion_matrix": [
+          [
+            40,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            9,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            3,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            1
+          ]
+        ],
+        "per_class": [
+          {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 40
+          },
+          {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 9
+          },
+          {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 3
+          },
+          {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 1
+          }
+        ],
+        "collapsed_3class": {
+          "balanced_accuracy": 1.0,
+          "macro_f1": 1.0,
+          "confusion_matrix": [
+            [
+              40,
+              0,
+              0
+            ],
+            [
+              0,
+              9,
+              0
+            ],
+            [
+              0,
+              0,
+              4
+            ]
+          ]
+        },
+        "binary_screening": {
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "sensitivity": 1.0,
+          "specificity": 1.0,
+          "roc_auc": 1.0,
+          "pr_auc": 0.9999999999999998,
+          "confusion_matrix": [
+            [
+              40,
+              0
+            ],
+            [
+              0,
+              13
+            ]
+          ]
+        }
+      },
+      "calibration": {
+        "temperature": 0.6070915655866845,
+        "ece_slice_uncalibrated": 0.11887235791391663,
+        "ece_slice_calibrated": 0.010518091710897761,
+        "ece_subject_calibrated": 0.37280960241531974
+      },
+      "abstention_subject": [
+        {
+          "coverage": 0.09433962264150944,
+          "accuracy": 1.0,
+          "balanced_accuracy": NaN,
+          "min_confidence": 0.6492440044091125
+        },
+        {
+          "coverage": 0.1509433962264151,
+          "accuracy": 1.0,
+          "balanced_accuracy": NaN,
+          "min_confidence": 0.6451476127865138
+        },
+        {
+          "coverage": 0.18867924528301888,
+          "accuracy": 1.0,
+          "balanced_accuracy": NaN,
+          "min_confidence": 0.6406737560976656
+        },
+        {
+          "coverage": 0.22641509433962265,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.6393107692019807
+        },
+        {
+          "coverage": 0.2830188679245283,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.6384450322605525
+        },
+        {
+          "coverage": 0.32075471698113206,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.6373671186099423
+        },
+        {
+          "coverage": 0.37735849056603776,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.634858005202095
+        },
+        {
+          "coverage": 0.41509433962264153,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.631536984751109
+        },
+        {
+          "coverage": 0.4528301886792453,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.629727046388552
+        },
+        {
+          "coverage": 0.5094339622641509,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.629195026238615
+        },
+        {
+          "coverage": 0.5471698113207547,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.6286965522102934
+        },
+        {
+          "coverage": 0.6037735849056604,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.6276754456495934
+        },
+        {
+          "coverage": 0.6415094339622641,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.6245033080591819
+        },
+        {
+          "coverage": 0.6792452830188679,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.6185627131916354
+        },
+        {
+          "coverage": 0.7358490566037735,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.6150812762769444
+        },
+        {
+          "coverage": 0.7735849056603774,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.6146681526037395
+        },
+        {
+          "coverage": 0.8113207547169812,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.6118941924431958
+        },
+        {
+          "coverage": 0.8679245283018868,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.6090100932365771
+        },
+        {
+          "coverage": 0.9056603773584906,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.6048361615295685
+        },
+        {
+          "coverage": 0.9622641509433962,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.5981698805154527
+        },
+        {
+          "coverage": 1.0,
+          "accuracy": 1.0,
+          "balanced_accuracy": 1.0,
+          "min_confidence": 0.5810324549713862
+        }
+      ],
+      "subject_predictions": [
+        {
+          "subject": "OAS1_0003",
+          "true": 1,
+          "pred": 1,
+          "probs": [
+            0.12,
+            0.6393,
+            0.1059,
+            0.1349
+          ]
+        },
+        {
+          "subject": "OAS1_0007",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6147,
+            0.1032,
+            0.1346,
+            0.1475
+          ]
+        },
+        {
+          "subject": "OAS1_0026",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6492,
+            0.0975,
+            0.1299,
+            0.1233
+          ]
+        },
+        {
+          "subject": "OAS1_0029",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6365,
+            0.112,
+            0.1293,
+            0.1222
+          ]
+        },
+        {
+          "subject": "OAS1_0043",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.615,
+            0.1364,
+            0.1135,
+            0.1351
+          ]
+        },
+        {
+          "subject": "OAS1_0049",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6151,
+            0.1448,
+            0.117,
+            0.1231
+          ]
+        },
+        {
+          "subject": "OAS1_0051",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6277,
+            0.1261,
+            0.1177,
+            0.1284
+          ]
+        },
+        {
+          "subject": "OAS1_0052",
+          "true": 2,
+          "pred": 2,
+          "probs": [
+            0.1267,
+            0.1319,
+            0.6285,
+            0.1129
+          ]
+        },
+        {
+          "subject": "OAS1_0060",
+          "true": 1,
+          "pred": 1,
+          "probs": [
+            0.1188,
+            0.6296,
+            0.1286,
+            0.123
+          ]
+        },
+        {
+          "subject": "OAS1_0062",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6014,
+            0.1319,
+            0.1406,
+            0.1261
+          ]
+        },
+        {
+          "subject": "OAS1_0070",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6308,
+            0.1101,
+            0.14,
+            0.1191
+          ]
+        },
+        {
+          "subject": "OAS1_0077",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6436,
+            0.1259,
+            0.1183,
+            0.1123
+          ]
+        },
+        {
+          "subject": "OAS1_0079",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6384,
+            0.1213,
+            0.1076,
+            0.1326
+          ]
+        },
+        {
+          "subject": "OAS1_0082",
+          "true": 1,
+          "pred": 1,
+          "probs": [
+            0.1191,
+            0.6393,
+            0.1177,
+            0.1239
+          ]
+        },
+        {
+          "subject": "OAS1_0085",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6315,
+            0.1254,
+            0.1175,
+            0.1256
+          ]
+        },
+        {
+          "subject": "OAS1_0092",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6349,
+            0.1228,
+            0.1301,
+            0.1123
+          ]
+        },
+        {
+          "subject": "OAS1_0096",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6587,
+            0.1189,
+            0.1116,
+            0.1108
+          ]
+        },
+        {
+          "subject": "OAS1_0098",
+          "true": 1,
+          "pred": 1,
+          "probs": [
+            0.1331,
+            0.6224,
+            0.1283,
+            0.1162
+          ]
+        },
+        {
+          "subject": "OAS1_0099",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6161,
+            0.1325,
+            0.1215,
+            0.1299
+          ]
+        },
+        {
+          "subject": "OAS1_0101",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6365,
+            0.1344,
+            0.1091,
+            0.12
+          ]
+        },
+        {
+          "subject": "OAS1_0102",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6463,
+            0.1252,
+            0.1211,
+            0.1074
+          ]
+        },
+        {
+          "subject": "OAS1_0112",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6467,
+            0.1161,
+            0.1218,
+            0.1153
+          ]
+        },
+        {
+          "subject": "OAS1_0116",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6046,
+            0.1401,
+            0.1219,
+            0.1334
+          ]
+        },
+        {
+          "subject": "OAS1_0138",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6283,
+            0.1258,
+            0.1234,
+            0.1224
+          ]
+        },
+        {
+          "subject": "OAS1_0150",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6407,
+            0.12,
+            0.1188,
+            0.1205
+          ]
+        },
+        {
+          "subject": "OAS1_0152",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6493,
+            0.131,
+            0.1086,
+            0.1111
+          ]
+        },
+        {
+          "subject": "OAS1_0168",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6292,
+            0.105,
+            0.1289,
+            0.137
+          ]
+        },
+        {
+          "subject": "OAS1_0178",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6388,
+            0.1091,
+            0.1205,
+            0.1315
+          ]
+        },
+        {
+          "subject": "OAS1_0179",
+          "true": 1,
+          "pred": 1,
+          "probs": [
+            0.1269,
+            0.6289,
+            0.1113,
+            0.1329
+          ]
+        },
+        {
+          "subject": "OAS1_0182",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.5982,
+            0.1278,
+            0.126,
+            0.1481
+          ]
+        },
+        {
+          "subject": "OAS1_0184",
+          "true": 2,
+          "pred": 2,
+          "probs": [
+            0.12,
+            0.104,
+            0.6266,
+            0.1494
+          ]
+        },
+        {
+          "subject": "OAS1_0188",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.581,
+            0.127,
+            0.1501,
+            0.1419
+          ]
+        },
+        {
+          "subject": "OAS1_0200",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6119,
+            0.1082,
+            0.1315,
+            0.1485
+          ]
+        },
+        {
+          "subject": "OAS1_0209",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6531,
+            0.1177,
+            0.1169,
+            0.1124
+          ]
+        },
+        {
+          "subject": "OAS1_0211",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6099,
+            0.1466,
+            0.1309,
+            0.1125
+          ]
+        },
+        {
+          "subject": "OAS1_0229",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6576,
+            0.1121,
+            0.1253,
+            0.105
+          ]
+        },
+        {
+          "subject": "OAS1_0238",
+          "true": 1,
+          "pred": 1,
+          "probs": [
+            0.1208,
+            0.6186,
+            0.1254,
+            0.1352
+          ]
+        },
+        {
+          "subject": "OAS1_0239",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.617,
+            0.1214,
+            0.1407,
+            0.1209
+          ]
+        },
+        {
+          "subject": "OAS1_0263",
+          "true": 1,
+          "pred": 1,
+          "probs": [
+            0.1268,
+            0.609,
+            0.1333,
+            0.1308
+          ]
+        },
+        {
+          "subject": "OAS1_0269",
+          "true": 2,
+          "pred": 2,
+          "probs": [
+            0.1318,
+            0.1234,
+            0.64,
+            0.1048
+          ]
+        },
+        {
+          "subject": "OAS1_0272",
+          "true": 1,
+          "pred": 1,
+          "probs": [
+            0.1246,
+            0.6083,
+            0.1276,
+            0.1396
+          ]
+        },
+        {
+          "subject": "OAS1_0275",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6138,
+            0.1271,
+            0.1471,
+            0.1121
+          ]
+        },
+        {
+          "subject": "OAS1_0288",
+          "true": 1,
+          "pred": 1,
+          "probs": [
+            0.1377,
+            0.6297,
+            0.1235,
+            0.1091
+          ]
+        },
+        {
+          "subject": "OAS1_0295",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6287,
+            0.127,
+            0.1312,
+            0.1131
+          ]
+        },
+        {
+          "subject": "OAS1_0308",
+          "true": 3,
+          "pred": 3,
+          "probs": [
+            0.1309,
+            0.1319,
+            0.1323,
+            0.6048
+          ]
+        },
+        {
+          "subject": "OAS1_0309",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6451,
+            0.1162,
+            0.1205,
+            0.1182
+          ]
+        },
+        {
+          "subject": "OAS1_0314",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6379,
+            0.1137,
+            0.1354,
+            0.113
+          ]
+        },
+        {
+          "subject": "OAS1_0341",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6105,
+            0.1301,
+            0.1394,
+            0.12
+          ]
+        },
+        {
+          "subject": "OAS1_0343",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6294,
+            0.1122,
+            0.1286,
+            0.1298
+          ]
+        },
+        {
+          "subject": "OAS1_0353",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6374,
+            0.12,
+            0.1295,
+            0.1131
+          ]
+        },
+        {
+          "subject": "OAS1_0367",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.6245,
+            0.111,
+            0.1477,
+            0.1168
+          ]
+        },
+        {
+          "subject": "OAS1_0377",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.5918,
+            0.1313,
+            0.1561,
+            0.1207
+          ]
+        },
+        {
+          "subject": "OAS1_0381",
+          "true": 0,
+          "pred": 0,
+          "probs": [
+            0.634,
+            0.1367,
+            0.1114,
+            0.1179
+          ]
+        }
+      ]
+    }
+  },
+  "cam_ventricle_overlap": {
+    "n_slices": 120,
+    "cam_top_frac": 0.15,
+    "trained_model": {
+      "dice": 0.12703338800886138,
+      "iou": 0.07021685464887854
+    },
+    "control_untrained_cnn": {
+      "dice": 0.012841591621596263,
+      "iou": 0.006584231027931109
+    },
+    "control_centred_blob": {
+      "dice": 0.19211943678081422,
+      "iou": 0.11097712458347475
+    },
+    "by_true_class": {
+      "Non": {
+        "n": 87,
+        "dice": 0.11778428079480577
+      },
+      "Very mild": {
+        "n": 23,
+        "dice": 0.15055810367422415
+      },
+      "Mild": {
+        "n": 5,
+        "dice": 0.04484473177156657
+      },
+      "Moderate": {
+        "n": 5,
+        "dice": 0.2619428177100546
+      }
+    },
+    "verdict": "Trained CAM does NOT beat the controls -- its apparent focus on the ventricles is explained by centre bias, not learned anatomy."
+  },
+  "primary_run": "_synthetic_check"
+}

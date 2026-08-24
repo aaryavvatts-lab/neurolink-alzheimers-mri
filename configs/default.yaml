@@ -1,0 +1,26 @@
+# NeuroLink configuration
+paths:
+  data_dir: data              # symlink -> ../Data (keeps all code paths space-free)
+  cache_dir: cache
+  runs_dir: runs
+  reports_dir: reports
+
+data:
+  image_size: 224             # cache resolution; 86437*224*224 uint8 = 4.34 GB
+  crop_margin: 0.04           # fractional margin around the brain bounding box
+  clip_percentiles: [1.0, 99.0]
+
+split:
+  n_folds: 5
+  seed: 1337
+  group_by: subject           # THE fix. Never change this to anything else.
+
+train:
+  batch_size: 96
+  epochs: 12
+  lr: 3.0e-4
+  weight_decay: 1.0e-4
+  label_smoothing: 0.05
+  num_workers: 6
+  slice_stride: 1             # 2 => use every other slice (adjacent slices are near-duplicates)
+  early_stop_patience: 4

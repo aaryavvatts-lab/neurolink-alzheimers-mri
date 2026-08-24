@@ -1,0 +1,31 @@
+# Dataset & derived artifacts — never commit (1.4 GB raw, 4.9 GB cache)
+Data/
+data
+cache/
+runs/
+.venv/
+*.npy
+*.pt
+*.pth
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+_bench*.py
+
+# Node / Next
+web/node_modules/
+web/.next/
+web/out/
+web/.vercel/
+
+# onnxruntime WASM binaries: 43 MB, and `npm run build` regenerates them from
+# node_modules via scripts/copy-ort.mjs. Committing them would quadruple the
+# repo for files that are already a dependency.
+web/public/ort/
+
+# OS
+.DS_Store

@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+
+body {
+  background:
+    radial-gradient(1100px 600px at 15% -10%, #16204a 0%, transparent 60%),
+    radial-gradient(900px 500px at 95% 0%, #1a1636 0%, transparent 55%),
+    #0b1020;
+  color: #e8ecf8;
+}
+
+.card {
+  @apply rounded-xl border border-line bg-panel/60 backdrop-blur-sm;
+}
+.pill {
+  @apply inline-flex items-center gap-1.5 rounded-full border border-line px-3 py-1 text-xs text-muted;
+}
+.h2 { @apply text-2xl sm:text-3xl font-semibold tracking-tight text-white; }
+.lead { @apply text-[15px] leading-relaxed text-slate-300; }
+.mono { @apply font-mono text-[13px]; }
+
+/* Wide content must scroll inside its own box, never the page body. */
+.scroll-x { @apply overflow-x-auto; }
+
+::-webkit-scrollbar { height: 8px; width: 8px; }
+::-webkit-scrollbar-thumb { background: #26325c; border-radius: 8px; }
