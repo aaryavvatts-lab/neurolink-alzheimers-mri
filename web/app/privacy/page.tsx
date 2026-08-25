@@ -15,7 +15,7 @@ export default function Privacy() {
     >
       <Clause n={1} title="Who runs this site">
         <p>
-          NeuroLink is a personal student research project. It is not a company, a clinic or a
+          SliceWise is a personal student research project. It is not a company, a clinic or a
           registered organisation, and it is not run on behalf of any university or hospital.
           If you want to reach the person responsible, open an issue on the project&apos;s
           public code repository, which is linked from the{" "}

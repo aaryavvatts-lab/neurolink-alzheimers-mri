@@ -67,7 +67,7 @@ export default function Nav() {
     <header className="sticky top-0 z-40 border-b border-rule bg-paper/95 backdrop-blur">
       <nav aria-label="Main" className="mx-auto flex max-w-wide items-center gap-4 px-5 py-3">
         <Link href="/" className="font-serif text-[1.05rem] font-semibold text-ink">
-          NeuroLink
+          SliceWise
         </Link>
 
         <div className="ml-auto hidden items-center gap-1 md:flex">

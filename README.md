@@ -10,7 +10,7 @@ appears to work and how well it actually works, a gap created entirely by how th
 > ⚠️ Research demonstration. Not a medical device, not validated for clinical use, and not fit to
 > inform any decision about any real person.
 
-**Live site:** https://neurolink-mri.vercel.app
+**Live site:** https://slicewise-mri.vercel.app
 
 ## What the runs actually found
 

@@ -6,10 +6,16 @@ import { STAGE, C } from "./charts/primitives";
 
 /**
  * Marks dark pixels well inside the brain and near the middle, then reports how
- * much of the brain they cover. This is the same idea as the ventricle measure
- * used in the simple comparison model, done live so you can see it work.
+ * much of the brain they cover.
+ *
+ * The cutoff is an absolute brightness, not a percentile of this brain. A
+ * percentile cannot compare two people: asking for the darkest quarter always
+ * returns about a quarter, whoever it is, so both panels would read the same
+ * number regardless of how much fluid either brain holds. Preprocessing already
+ * puts every scan on the same brightness scale, which is what makes a fixed
+ * cutoff comparable between patients.
  */
-function measure(img: ImageData, percentile: number, centreFrac: number) {
+function measure(img: ImageData, cutoff: number, centreFrac: number) {
   const { width: w, height: h, data } = img;
   const grey = new Uint8Array(w * h);
   for (let i = 0; i < w * h; i++) grey[i] = data[i * 4];
@@ -19,18 +25,25 @@ function measure(img: ImageData, percentile: number, centreFrac: number) {
   for (let i = 0; i < grey.length; i++) head[i] = grey[i] > 22 ? 1 : 0;
 
   // Pull inward so skull and scalp are excluded, leaving brain.
-  const r = Math.round(0.11 * Math.min(w, h));
-  const brain = erode(head, w, h, r);
+  //
+  // The Python side builds its kernel as np.ones((k, k)) with k about 12% of the
+  // image, and a k-wide kernel erodes by k/2. Reading that number as a radius
+  // here erodes twice as far, which on some scans removes the brain completely
+  // and leaves nothing to measure. Half of it is the matching amount.
+  //
+  // Even then a head that is thin in places can vanish, so back the radius off
+  // until something survives rather than giving up and showing nothing.
+  let brain: Uint8Array<ArrayBufferLike> = new Uint8Array(w * h);
   let brainCount = 0;
-  for (let i = 0; i < brain.length; i++) if (brain[i]) brainCount++;
+  for (let r = Math.round(0.055 * Math.min(w, h)); r >= 2; r -= 2) {
+    brain = erode(head, w, h, r);
+    brainCount = 0;
+    for (let i = 0; i < brain.length; i++) if (brain[i]) brainCount++;
+    if (brainCount >= 400) break;
+  }
   if (brainCount < 200) return null;
 
-  // Threshold at the chosen percentile of brain brightness.
-  const hist = new Uint32Array(256);
-  for (let i = 0; i < grey.length; i++) if (brain[i]) hist[grey[i]]++;
-  let cum = 0, thr = 0;
-  const target = (percentile / 100) * brainCount;
-  for (let b = 0; b < 256; b++) { cum += hist[b]; if (cum >= target) { thr = b; break; } }
+  const thr = cutoff;
 
   const cy = h / 2, cx = w / 2;
   const rad = (centreFrac * Math.min(w, h)) / 2;
@@ -48,7 +61,7 @@ function measure(img: ImageData, percentile: number, centreFrac: number) {
            ratio: vent / brainCount, threshold: thr, w, h };
 }
 
-function erode(mask: Uint8Array, w: number, h: number, r: number): Uint8Array {
+function erode(mask: Uint8Array, w: number, h: number, r: number): Uint8Array<ArrayBufferLike> {
   const tmp = new Uint8Array(w * h), out = new Uint8Array(w * h);
   for (let y = 0; y < h; y++)
     for (let x = 0; x < w; x++) {
@@ -75,8 +88,10 @@ export default function VentricleTool() {
   const [list, setList] = useState<VolumeMeta[]>([]);
   const [vols, setVols] = useState<Record<string, Volume>>({});
   const [pick, setPick] = useState<[string, string] | null>(null);
-  const [pctile, setPctile] = useState(25);
-  const [slice, setSlice] = useState(34);
+  const [cutoff, setCutoff] = useState(70);
+  // Around here the lateral ventricles are widest in frame, which is where the
+  // difference between a healthy brain and an affected one is easiest to see.
+  const [slice, setSlice] = useState(20);
   const [stats, setStats] = useState<Record<string, { ratio: number; label: number }>>({});
   const refs = useRef<Record<string, HTMLCanvasElement | null>>({});
 
@@ -109,7 +124,7 @@ export default function VentricleTool() {
       if (!v || !cv) continue;
       const idx = Math.min(v.meta.depth - 1, slice);
       const img = extractPlane(v, "axial", idx);
-      const m = measure(img, pctile, 0.5);
+      const m = measure(img, cutoff, 0.5);
       cv.width = img.width; cv.height = img.height;
       const ctx = cv.getContext("2d")!;
       if (!m) { ctx.putImageData(img, 0, 0); continue; }
@@ -128,7 +143,7 @@ export default function VentricleTool() {
       next[id] = { ratio: m.ratio, label: v.meta.label };
     }
     setStats(next);
-  }, [pick, vols, slice, pctile]);
+  }, [pick, vols, slice, cutoff]);
 
   useEffect(() => { render(); }, [render]);
 
@@ -188,12 +203,16 @@ export default function VentricleTool() {
         </label>
         <label className="block">
           <span className="mb-1.5 block text-[0.875rem] text-body">
-            How dark counts as fluid, darkest {pctile} percent
+            Anything darker than <span className="tnum text-ink">{cutoff}</span> counts as fluid
           </span>
-          <input type="range" min={5} max={45} value={pctile}
-                 onChange={(e) => setPctile(Number(e.target.value))}
+          <input type="range" min={30} max={120} value={cutoff}
+                 onChange={(e) => setCutoff(Number(e.target.value))}
                  className="w-full accent-[#1D5B8F]"
-                 aria-label="Darkness threshold as a percentile" />
+                 aria-label="Brightness cutoff below which a pixel counts as fluid" />
+          <span className="mt-1 block text-[0.75rem] text-muted">
+            Brightness runs 0 for black to 255 for white. The same cutoff is used on both
+            panels, which is what makes the two numbers comparable.
+          </span>
         </label>
       </div>
 

@@ -16,13 +16,13 @@ const mono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "NeuroLink: reading Alzheimer's stage from a brain MRI slice",
-    template: "%s | NeuroLink",
+    default: "SliceWise: reading Alzheimer's stage from a brain MRI slice",
+    template: "%s | SliceWise",
   },
   description:
     "A student project that trains a small network to read Alzheimer's stage from OASIS brain MRI, and measures how much of the usual 99% accuracy is an artefact of how the data was split.",
   openGraph: {
-    title: "NeuroLink",
+    title: "SliceWise",
     description:
       "Training a network to stage Alzheimer's from brain MRI, and measuring how much accuracy comes from splitting the data wrong.",
     type: "website",

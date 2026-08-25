@@ -15,7 +15,7 @@ export default function Terms() {
     >
       <Clause n={1} title="This is not medical advice, and not a medical device">
         <p>
-          NeuroLink is a research demonstration built by a student. It has not been reviewed
+          SliceWise is a research demonstration built by a student. It has not been reviewed
           or approved by any medicines or medical device regulator, including the MHRA in the
           United Kingdom, the FDA in the United States, or any equivalent body elsewhere. It
           has never been tested in a clinic, on a patient, or by a doctor.
