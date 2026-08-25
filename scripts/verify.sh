@@ -34,6 +34,16 @@ cd web && npx tsc --noEmit && echo "   ok"
 echo "== browser preprocessing still matches python"
 npm test --silent
 
+echo "== every source file is actually tracked by git"
+missing=$(git status --porcelain --untracked-files=all -- src web/app web/components web/lib web/data \
+  | grep '^??' || true)
+if [ -n "$missing" ]; then
+  echo "   these are not in git, the deploy would be built without them:"
+  echo "$missing" | sed 's/^/     /'
+  exit 1
+fi
+echo "   ok"
+
 echo "== site builds"
 npm run build >/dev/null && echo "   ok"
 

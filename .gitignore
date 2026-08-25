@@ -1,6 +1,9 @@
-# Dataset & derived artifacts — never commit (1.4 GB raw, 4.9 GB cache)
-Data/
-data
+# Dataset and derived artifacts, never commit (1.4 GB raw, 4.9 GB cache)
+# Anchored with a leading slash on purpose. A bare "data" also matches
+# web/data, which holds the results the site needs at build time, and leaving
+# it out breaks the deploy with no obvious cause.
+/Data/
+/data
 cache/
 runs/
 .venv/
