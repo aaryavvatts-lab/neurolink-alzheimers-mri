@@ -2,7 +2,6 @@
 
 import { results as r } from "@/lib/results";
 import { Callout, Figure, Page, Prose, Ref, Section } from "@/components/ui";
-import { Loading } from "@/components/Loading";
 
 const STEPS: [string, string][] = [
   ["Turn it grey",
