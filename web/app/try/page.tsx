@@ -8,7 +8,7 @@ export default function TryPage() {
     <Page
       eyebrow="Tool 01"
       title="Run the model on a brain scan"
-      lede="Drop in a scan, or pick one of the held-out examples. The whole thing happens on your own machine."
+      lede="Drop in one scan or a whole folder of slices. Several images from the same scan are averaged into a single answer, which is how every number on this site is measured. You get the full breakdown, an honest read on how much to trust it, and a report you can keep. All of it runs on your own machine."
     >
       <Section n="1" title="The demo">
         <Demo />
@@ -40,9 +40,17 @@ export default function TryPage() {
               it says so on screen instead of quietly showing you a wrong answer.
             </p>
             <p>
-              You can drop in your own image, though it will only make sense for a scan that
-              looks like the ones here: a flat slice through the head, roughly at eye level
-              or above, on a black background.
+              You can drop in your own images, and dropping in several from the same scan is
+              worth doing. One slice is thin evidence and the answer moves depending on where
+              the cut was taken. Averaging a whole scan is the unit every number on this site
+              is measured in, and the page will tell you how many of the individual slices
+              actually agreed with the overall answer.
+            </p>
+            <p>
+              It will only make sense for scans that look like the ones here: a flat slice
+              through the head, roughly at eye level or above, on a black background. Drop in a
+              photograph and you will get four confident numbers about nothing, which is worth
+              seeing once.
             </p>
           </Prose>
         </div>

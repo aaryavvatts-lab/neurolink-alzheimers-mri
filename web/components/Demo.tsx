@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { preprocess } from "@/lib/preprocess";
 import { camToRGBA, getMeta, loadModel, predict, type Prediction } from "@/lib/model";
 import { SHORT, FULL } from "@/lib/types";
+import { aggregate, buildReport, readTrust, type Aggregate, type SlicePrediction } from "@/lib/report";
 import { STAGE } from "./charts/primitives";
 import { Callout } from "./ui";
 
@@ -52,6 +53,9 @@ export default function Demo() {
   const [dragging, setDragging] = useState(false);
   const [source, setSource] = useState<string | null>(null);
   const [check, setCheck] = useState<{ diff: number; agree: boolean } | null>(null);
+  const [batch, setBatch] = useState<SlicePrediction[]>([]);
+  const [agg, setAgg] = useState<Aggregate | null>(null);
+  const [progress, setProgress] = useState<string | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const grayRef = useRef<Float32Array | null>(null);
@@ -79,7 +83,7 @@ export default function Demo() {
   }, []);
 
   const run = useCallback(async (src: string | File, sample: Sample | null, label: string) => {
-    setBusy(true); setCheck(null); setSource(label);
+    setBusy(true); setCheck(null); setSource(label); setBatch([]); setAgg(null);
     try {
       if (status !== "ready") {
         setStatus("loading");
@@ -113,16 +117,88 @@ export default function Demo() {
     if (grayRef.current) draw(grayRef.current, result, overlay);
   }, [overlay, result, draw]);
 
-  const onFiles = (files: FileList | null) => {
-    const f = files?.[0];
-    if (!f) return;
-    if (!f.type.startsWith("image/")) {
+  /**
+   * Reads however many images were given.
+   *
+   * One image gets the single-slice path. Several are treated as slices of one
+   * scan and averaged into a single answer, which is how every number reported
+   * on this site is measured. A model that answers per picture and a model that
+   * answers per person are not the same tool, and the second one is the useful
+   * one.
+   */
+  const onFiles = useCallback(async (files: FileList | null) => {
+    const imgs = [...(files ?? [])].filter((f) => f.type.startsWith("image/"));
+    if (!imgs.length) {
       setStatus("error");
-      setMsg("Please choose an image file. The scans in this dataset are JPGs.");
+      setMsg("No images there. The scans in this dataset are JPGs, and you can drop in several at once.");
       return;
     }
-    run(f, null, f.name);
-  };
+    imgs.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
+
+    if (imgs.length === 1) {
+      setBatch([]); setAgg(null);
+      run(imgs[0], null, imgs[0].name);
+      return;
+    }
+
+    setBusy(true); setCheck(null); setActive(null); setSource(`${imgs.length} images`);
+    try {
+      if (status !== "ready") {
+        setStatus("loading");
+        await loadModel((m) => setMsg(m));
+        setStatus("ready");
+      }
+      const meta = getMeta();
+      const size = meta?.input_size ?? 160;
+      const out: SlicePrediction[] = [];
+      let lastGray: Float32Array | null = null;
+      let lastPred: Prediction | null = null;
+
+      for (let i = 0; i < imgs.length; i++) {
+        setProgress(`Reading image ${i + 1} of ${imgs.length}`);
+        const data = await toImageData(imgs[i]);
+        const pre = preprocess(data, size, 0.04, meta?.mean ?? 0.449, meta?.std ?? 0.226);
+        const p = await predict(pre.tensor, size);
+        out.push({ name: imgs[i].name, probs: p.probs, pred: p.pred, ms: p.ms });
+        lastGray = pre.gray; lastPred = p;
+        // let the browser paint the progress line
+        await new Promise((r) => setTimeout(r, 0));
+      }
+
+      const a = aggregate(out);
+      setBatch(out); setAgg(a);
+      if (lastGray && lastPred) {
+        grayRef.current = lastGray;
+        setResult(lastPred);
+        draw(lastGray, lastPred, overlay);
+      }
+    } catch (e) {
+      setStatus("error");
+      setMsg(e instanceof Error ? e.message : String(e));
+    } finally {
+      setBusy(false); setProgress(null);
+    }
+  }, [draw, overlay, run, status]);
+
+  const downloadReport = useCallback(() => {
+    const meta = getMeta();
+    const slices: SlicePrediction[] = batch.length
+      ? batch
+      : result
+        ? [{ name: source ?? "image", probs: result.probs, pred: result.pred, ms: result.ms }]
+        : [];
+    if (!slices.length) return;
+    const a = agg ?? aggregate(slices);
+    const text = buildReport(slices, a, {
+      arch: meta?.arch ?? "resnet", inputSize: meta?.input_size ?? 160,
+    });
+    const url = URL.createObjectURL(new Blob([text], { type: "text/plain" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "slicewise-report.txt";
+    link.click();
+    URL.revokeObjectURL(url);
+  }, [batch, agg, result, source]);
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
@@ -136,7 +212,89 @@ export default function Demo() {
             dragging ? "border-steel bg-steel/5" : ""
           }`}
         >
-          {result ? (
+          {agg && (
+          <div className="fig p-5">
+            <div className="flex flex-wrap items-end justify-between gap-4 border-b border-rule pb-4">
+              <div>
+                <p className="p-small">
+                  Averaged over {agg.nSlices} images, the way a whole scan is scored
+                </p>
+                <p className="font-serif text-[1.75rem] font-semibold leading-tight"
+                   style={{ color: STAGE[agg.pred] }}>
+                  {FULL[agg.pred]}
+                </p>
+              </div>
+              <button type="button" onClick={downloadReport}
+                      className="border border-ink px-3 py-2 text-[0.8125rem] hover:bg-ink hover:text-white">
+                Download the full report
+              </button>
+            </div>
+
+            <ul className="mt-4 space-y-2.5">
+              {agg.probs.map((p, i) => (
+                <li key={i}>
+                  <div className="flex justify-between text-[0.8125rem]">
+                    <span className={i === agg.pred ? "text-ink" : "text-muted"}>{SHORT[i]}</span>
+                    <span className="tnum text-muted">{(p * 100).toFixed(1)}%</span>
+                  </div>
+                  <div className="mt-1 h-1.5 w-full bg-rule/70">
+                    <div className="h-1.5" style={{ width: `${Math.max(p * 100, 0.6)}%`, background: STAGE[i] }} />
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-5 grid gap-4 sm:grid-cols-3">
+              <div className="border-t border-rule pt-2">
+                <p className="tnum font-serif text-[1.25rem] text-ink">
+                  {(agg.agreement * 100).toFixed(0)}%
+                </p>
+                <p className="p-small">of images voted this way on their own</p>
+              </div>
+              <div className="border-t border-rule pt-2">
+                <p className="tnum font-serif text-[1.25rem] text-ink">
+                  {(agg.margin * 100).toFixed(0)} pts
+                </p>
+                <p className="p-small">ahead of {SHORT[agg.runnerUp]}, the next best answer</p>
+              </div>
+              <div className="border-t border-rule pt-2">
+                <p className="tnum font-serif text-[1.25rem] text-ink">{agg.nSlices}</p>
+                <p className="p-small">images read, in {(batch.reduce((s, x) => s + x.ms, 0) / 1000).toFixed(1)}s</p>
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <Callout tone={readTrust(agg).level === "higher" ? "good" : "warn"}
+                       title="How much to trust this">
+                {readTrust(agg).text}
+              </Callout>
+            </div>
+
+            <details className="mt-5">
+              <summary className="cursor-pointer text-[0.875rem] text-steel">
+                Show what each image said on its own
+              </summary>
+              <div className="scroll-x mt-3">
+                <table className="data min-w-[380px]">
+                  <thead>
+                    <tr><th>Image</th><th>Answer</th><th className="text-right">Confidence</th></tr>
+                  </thead>
+                  <tbody>
+                    {batch.map((b) => (
+                      <tr key={b.name}>
+                        <td className="pr-4 font-mono text-[0.75rem]">{b.name.slice(0, 40)}</td>
+                        <td style={{ color: STAGE[b.pred] }}>{SHORT[b.pred]}</td>
+                        <td className="text-right">{(b.probs[b.pred] * 100).toFixed(0)}%</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </div>
+        )}
+
+        {result ? (
             <canvas
               ref={canvasRef}
               className="h-full w-full object-contain"
@@ -146,10 +304,14 @@ export default function Demo() {
             <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">
               <canvas ref={canvasRef} className="hidden" />
               <p className="text-[0.9375rem] text-body">
-                Drop a brain scan here, or pick one below.
+                Drop a brain scan here, or several at once.
               </p>
               <p className="text-[0.8125rem] text-muted">
-                It is read on your own machine. Nothing is uploaded.
+                Drop a whole folder of slices from one scan and they are averaged into a
+                single answer, which is how every number on this site is measured.
+              </p>
+              <p className="text-[0.8125rem] text-muted">
+                Read on your own machine. Nothing is uploaded.
               </p>
             </div>
           )}
@@ -157,7 +319,7 @@ export default function Demo() {
           {busy && (
             <div className="absolute inset-0 flex items-center justify-center bg-white/80">
               <p className="text-[0.875rem] text-body">
-                {status === "loading" ? `Getting the model ready (${msg})` : "Working"}
+                {progress ?? (status === "loading" ? `Getting the model ready (${msg})` : "Working")}
               </p>
             </div>
           )}
@@ -169,10 +331,11 @@ export default function Demo() {
             onClick={() => fileRef.current?.click()}
             className="rounded border border-rule bg-white px-3 py-2 text-[0.875rem] hover:border-steel"
           >
-            Choose a file
+            Choose files
           </button>
           <input
             ref={fileRef} type="file" accept="image/*" className="sr-only"
+            multiple
             onChange={(e) => onFiles(e.target.files)}
           />
           {result && (
@@ -241,6 +404,18 @@ export default function Demo() {
               Worked out in {result.ms.toFixed(0)} milliseconds on your machine. Warm colours on
               the picture show the parts of the slice that pushed hardest towards the answer above.
             </p>
+
+            {!agg && (
+              <div className="mt-4 flex flex-wrap items-center gap-3">
+                <button type="button" onClick={downloadReport}
+                        className="border border-rule px-3 py-2 text-[0.8125rem] hover:border-steel">
+                  Download the full report
+                </button>
+                <span className="p-small">
+                  One slice only. Drop in several from the same scan for a steadier answer.
+                </span>
+              </div>
+            )}
 
             {check && (
               <div className="mt-4">
