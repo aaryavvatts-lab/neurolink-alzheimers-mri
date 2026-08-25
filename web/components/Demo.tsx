@@ -268,7 +268,10 @@ export default function Demo() {
         <div className="fig p-5">
           <p className="text-[0.9375rem] font-medium text-ink">Scans the model has never seen</p>
           <p className="mt-1 p-small">
-            A tick means the model agreed with the clinician on that scan. A cross means it did not.
+            One tile per patient, not per picture. A tick means the model agreed with the
+            clinician, a cross means it did not. The moderate group has a single tile because
+            the held-out set contains a single moderate patient, which is the honest size of
+            that group rather than a display choice.
           </p>
           {samples.length === 0 ? (
             <p className="mt-4 p-small">No examples have been exported yet.</p>

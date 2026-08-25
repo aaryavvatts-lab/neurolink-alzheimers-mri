@@ -176,21 +176,57 @@ export default function Home() {
             </div>
           </Section>
 
-          <Section n="5" id="try" title="Try it on a scan">
+          <Section n="5" id="tools" title="Three things you can actually do here">
             <div className="max-w-prose">
               <Prose>
                 <p>
-                  The model runs inside your browser. Nothing you open gets sent to a server,
-                  because there is no server. You can drop in one of the scans from the
-                  dataset and watch it work, and see which parts of the slice it leaned on.
+                  Everything below runs on your own machine. There is no server behind this
+                  site, so nothing you open or paste in is sent anywhere.
                 </p>
               </Prose>
-              <p className="mt-6">
-                <Link href="/try"
-                      className="inline-block bg-ink px-5 py-2.5 text-[0.9375rem] text-white hover:bg-steel">
-                  Open the demo
+            </div>
+
+            <div className="mt-8 grid gap-5 md:grid-cols-3">
+              {[
+                {
+                  href: "/try",
+                  kicker: "Run the model",
+                  title: "Drop in a scan and see what it says",
+                  body: "Pick a patient the model never trained on, or use your own image. You get the four scores and a map of which parts of the slice mattered most.",
+                },
+                {
+                  href: "/explore",
+                  kicker: "Look inside",
+                  title: "Cut through a real brain in three directions",
+                  body: "The 61 slices stack into a block, so the other two views can be rebuilt from it. Turn it, slide through it, and measure the fluid spaces yourself.",
+                },
+                {
+                  href: "/check",
+                  kicker: "Check your own work",
+                  title: "Find this mistake in your dataset",
+                  body: "Paste your file names. It works out what your files have in common and tells you whether a random split would put the same subject on both sides.",
+                },
+              ].map((c) => (
+                <Link key={c.href} href={c.href}
+                      className="group block border border-rule bg-white p-5 transition hover:border-steel">
+                  <p className="font-mono text-[0.6875rem] uppercase tracking-[0.12em] text-steel">
+                    {c.kicker}
+                  </p>
+                  <p className="mt-2 font-serif text-[1.125rem] leading-snug text-ink">{c.title}</p>
+                  <p className="mt-2 p-small">{c.body}</p>
+                  <p className="mt-4 text-[0.8125rem] text-steel group-hover:underline">
+                    Open
+                  </p>
                 </Link>
-              </p>
+              ))}
+            </div>
+
+            <div className="mt-6 max-w-prose">
+              <Callout title="The third one is the useful one">
+                The first two are about this project. The last one is not. The mistake this
+                whole site is about is not specific to brain scans, and the checker works on
+                any list of file names, so if you take one thing from here, take that.
+              </Callout>
             </div>
           </Section>
 

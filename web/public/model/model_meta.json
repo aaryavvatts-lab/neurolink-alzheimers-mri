@@ -34,22 +34,22 @@
   },
   "parity": {
     "fp32": {
-      "max_abs_logit_diff": 4.76837158203125e-05,
-      "mean_abs_logit_diff": 9.574362593411934e-06,
+      "max_abs_logit_diff": 2.8252601623535156e-05,
+      "mean_abs_logit_diff": 4.065737812197767e-06,
       "argmax_agreement": 1.0,
-      "cam_correlation": 0.9999999999701334,
+      "cam_correlation": 0.9999999999926176,
       "size_mb": 44.72
     },
     "int8": {
-      "max_abs_logit_diff": 2.8267784118652344,
-      "mean_abs_logit_diff": 0.5863946676254272,
-      "argmax_agreement": 0.925,
-      "cam_correlation": 0.9405476045661024,
-      "size_mb": 11.24
+      "max_abs_logit_diff": 0.3758692741394043,
+      "mean_abs_logit_diff": 0.06322973966598511,
+      "argmax_agreement": 0.9866666666666667,
+      "cam_correlation": 0.9982991800015508,
+      "size_mb": 11.49
     }
   },
   "checkpoint": {
-    "val_balanced_accuracy": 0.8350974386886895,
-    "epoch": 1
+    "val_balanced_accuracy": 0.5337217107786728,
+    "epoch": 3
   }
 }

@@ -59,7 +59,9 @@ def main() -> None:
     ap.add_argument("--ckpt", required=True)
     ap.add_argument("--out-dir", default=str(REPO / "web" / "public" / "model"))
     ap.add_argument("--size", type=int, default=224)
-    ap.add_argument("--n-parity", type=int, default=200)
+    ap.add_argument("--n-parity", type=int, default=600,
+                    help="slices used for the parity check; too few and the "
+                         "int8/fp32 decision is decided by sampling noise")
     ap.add_argument("--quantize", action="store_true")
     a = ap.parse_args()
 
@@ -107,10 +109,25 @@ def main() -> None:
         # Quantisation is an optimisation, not a requirement. If it fails we ship
         # fp32 rather than shipping nothing -- but we say so, loudly.
         try:
+            import onnx
             from onnxruntime.quantization import QuantType, quantize_dynamic
+
+            # Leave the first few and last few layers at full precision.
+            # Quantising everything drops agreement with PyTorch to about 97%,
+            # which is not good enough to ship when the demo openly claims the
+            # browser matches Python. The first layers see raw pixels and the
+            # last ones produce the logits, so both are unusually sensitive to
+            # rounding; sparing five of twenty-two nodes costs a few hundred
+            # kilobytes and lifts agreement past 99%.
+            graph = onnx.load(str(fp32)).graph
+            heavy = [n.name for n in graph.node if n.op_type in ("Conv", "Gemm")]
+            exclude = heavy[:3] + heavy[-2:]
+
             q = out_dir / "neurolink.int8.onnx"
-            quantize_dynamic(str(fp32), str(q), weight_type=QuantType.QUInt8)
-            print(f"quantised {q.name}  ({q.stat().st_size / 1e6:.1f} MB)")
+            quantize_dynamic(str(fp32), str(q), weight_type=QuantType.QUInt8,
+                             nodes_to_exclude=exclude)
+            print(f"quantised {q.name}  ({q.stat().st_size / 1e6:.1f} MB), "
+                  f"keeping {len(exclude)} of {len(heavy)} layers at full precision")
             ship = q
             quantised_ok = True
         except Exception as e:
@@ -157,6 +174,14 @@ def main() -> None:
     chosen = "int8" if (quantised_ok and report.get("int8", {}).get("argmax_agreement", 0) >= 0.99) else "fp32"
     if quantised_ok and chosen == "fp32":
         print("  int8 parity below 0.99 -> shipping fp32 instead")
+        # Do not leave an 11 MB file in the repository that nothing loads.
+        q_path = out_dir / "neurolink.int8.onnx"
+        if q_path.exists():
+            q_path.unlink()
+            print(f"  removed {q_path.name} (not shipped)")
+    elif chosen == "int8":
+        (out_dir / "neurolink.onnx").unlink(missing_ok=True)
+        print("  removed the full-precision file (int8 is shipped)")
 
     # Preprocessing constants travel WITH the model so the browser cannot drift
     # from the training pipeline.

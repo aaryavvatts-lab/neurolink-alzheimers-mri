@@ -61,17 +61,16 @@ def main() -> None:
         if len(pool) == 0:
             print(f"  class {SHORT_NAMES[cls]}: no held-out mid-brain slices")
             continue
-        # One slice per distinct subject where possible -- a gallery of six cuts
-        # from one brain would misrepresent the diversity of the test set.
+        # Exactly one slice per distinct patient, and no padding.
+        #
+        # Filling a class up to per_class by taking extra slices from whoever is
+        # available makes six thumbnails of ONE brain look like six patients.
+        # Moderate Dementia has a single patient in the test set, so it gets a
+        # single tile, which is the truthful picture of this dataset.
         subs = mf["subject"].to_numpy()[pool]
-        chosen = []
-        for s in pd.unique(subs)[: a.per_class]:
-            cand = pool[subs == s]
-            chosen.append(int(rng.choice(cand)))
-        while len(chosen) < a.per_class and len(pool) > len(chosen):
-            extra = int(rng.choice(pool))
-            if extra not in chosen:
-                chosen.append(extra)
+        chosen = [int(rng.choice(pool[subs == subj]))
+                  for subj in pd.unique(subs)[: a.per_class]]
+        print(f"  {SHORT_NAMES[cls]}: {len(chosen)} patient(s) available in the held-out set")
 
         for row in chosen:
             rec = mf.iloc[row]

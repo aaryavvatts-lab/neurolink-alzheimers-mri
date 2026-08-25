@@ -98,6 +98,26 @@ Individual steps:
 
 ## The website
 
+Five content pages and four policy pages:
+
+| Page | What is on it |
+|---|---|
+| Project | The leakage finding, the dataset, and what actually works |
+| Try it | Drop in a scan, run the model in your browser, see where it looked |
+| Explore | Cut through a real scan in three directions, and measure the fluid spaces |
+| Check your data | Paste your own file names and find grouped leakage in your dataset |
+| Results | Confusion matrix, curve, coverage slider, attention overlap, probes |
+| Method | Preprocessing, splitting, the model, and the mistakes made along the way |
+| References | Real papers, looked up rather than remembered |
+| Privacy, Terms, Cookies, Accessibility | Written from what the site does, not from a template |
+
+The **Check your data** page is the part worth reusing. It reads a list of file
+names, works out what several files have in common (a patient, a video, a
+speaker), and reports how many of those groups a random split would put on both
+sides of the train and test line. It runs entirely in the browser and never
+reads file contents.
+
+
 ```bash
 cd web && npm install && npm run build   # static export to web/out
 ```

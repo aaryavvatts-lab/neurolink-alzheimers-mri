@@ -7,6 +7,8 @@ import { useState } from "react";
 const LINKS: [string, string][] = [
   ["/", "Project"],
   ["/try", "Try it"],
+  ["/explore", "Explore"],
+  ["/check", "Check your data"],
   ["/results", "Results"],
   ["/method", "Method"],
   ["/references", "References"],
@@ -18,12 +20,12 @@ export default function Nav() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-rule bg-paper/95 backdrop-blur">
-      <nav aria-label="Main" className="mx-auto flex max-w-wide items-center gap-6 px-5 py-3">
+      <nav aria-label="Main" className="mx-auto flex max-w-wide items-center gap-5 px-5 py-3">
         <Link href="/" className="font-serif text-[1.05rem] font-semibold text-ink">
           NeuroLink
         </Link>
 
-        <ul className="ml-auto hidden items-center gap-1 sm:flex">
+        <ul className="ml-auto hidden items-center gap-0.5 lg:flex">
           {LINKS.map(([href, label]) => {
             const active = href === "/" ? path === "/" : path.startsWith(href);
             return (
@@ -31,7 +33,7 @@ export default function Nav() {
                 <Link
                   href={href}
                   aria-current={active ? "page" : undefined}
-                  className={`rounded px-3 py-1.5 text-[0.875rem] ${
+                  className={`rounded px-2.5 py-1.5 text-[0.8125rem] whitespace-nowrap ${
                     active ? "bg-ink text-white" : "text-body hover:bg-rule/50"
                   }`}
                 >
@@ -47,14 +49,14 @@ export default function Nav() {
           onClick={() => setOpen((v) => !v)}
           aria-expanded={open}
           aria-controls="mobile-nav"
-          className="ml-auto rounded border border-rule px-3 py-1.5 text-[0.875rem] sm:hidden"
+          className="ml-auto rounded border border-rule px-3 py-1.5 text-[0.875rem] lg:hidden"
         >
           {open ? "Close" : "Menu"}
         </button>
       </nav>
 
       {open && (
-        <ul id="mobile-nav" className="border-t border-rule px-5 pb-3 sm:hidden">
+        <ul id="mobile-nav" className="border-t border-rule px-5 pb-3 lg:hidden">
           {LINKS.map(([href, label]) => (
             <li key={href}>
               <Link
