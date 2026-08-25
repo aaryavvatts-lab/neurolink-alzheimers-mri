@@ -1,0 +1,54 @@
+# Deploy the site to Vercel whenever main changes.
+#
+# Vercel's usual Git integration needs a GitHub account linked to the Vercel
+# account through an OAuth flow. That link is not in place here, so instead of
+# Vercel pulling from GitHub, GitHub pushes to Vercel using the CLI. The result
+# is the same: commit to main, the live site updates.
+#
+# The three secrets live in the repository settings under Actions, and the token
+# is the only one that is sensitive.
+
+name: Deploy to Vercel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+
+      - name: Check the browser preprocessing still matches the Python
+        working-directory: web
+        run: npm test
+        # The fixtures this reads are derived from the dataset, which is not in
+        # the repository, so skip rather than fail when they are absent.
+        continue-on-error: true
+
+      - name: Build
+        working-directory: web
+        run: npm run build
+
+      - name: Deploy to production
+        working-directory: web
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: npx vercel@latest deploy --prod --yes --token "${{ secrets.VERCEL_TOKEN }}"
