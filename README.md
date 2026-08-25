@@ -10,7 +10,7 @@ appears to work and how well it actually works, a gap created entirely by how th
 > ⚠️ Research demonstration. Not a medical device, not validated for clinical use, and not fit to
 > inform any decision about any real person.
 
-**Live site:** https://neurolink-479xxp6g7-scholarly-work-projects.vercel.app
+**Live site:** https://neurolink-mri.vercel.app
 
 ## What the runs actually found
 
@@ -120,7 +120,7 @@ Individual steps:
 
 ## The website
 
-Five content pages and four policy pages:
+Twelve content pages and four policy pages:
 
 | Page | What is on it |
 |---|---|

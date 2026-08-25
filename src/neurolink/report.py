@@ -122,11 +122,17 @@ def main() -> None:
         # empty shell until JavaScript runs, which is bad for search engines and
         # useless to anyone browsing without it. Three fields nothing on the site
         # reads are dropped, which is most of the weight.
-        DROP = ("subject_predictions", "roc_slice", "reliability_slice")
+        DROP = ("roc_slice", "reliability_slice")
         trimmed = json.loads(json.dumps(results))
-        for run in trimmed["runs"].values():
+        primary = trimmed.get("primary_run")
+        for name, run in trimmed["runs"].items():
             for k in DROP:
                 run.pop(k, None)
+            # Per-patient predictions are only needed for the model the site
+            # actually presents. Keeping them for the leaky run as well would add
+            # 347 rows nothing reads.
+            if name != primary:
+                run.pop("subject_predictions", None)
         data_dir = REPO / "web" / "data"
         data_dir.mkdir(exist_ok=True)
         jsonio.write(data_dir / "results.json", trimmed)

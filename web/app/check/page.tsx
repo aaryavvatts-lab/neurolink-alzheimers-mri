@@ -6,7 +6,7 @@ import { Callout, Page, Prose, Ref, Section } from "@/components/ui";
 export default function CheckPage() {
   return (
     <Page
-      eyebrow="Tool"
+      eyebrow="Tool 06"
       title="Check your own dataset for the same mistake"
       lede="Paste your file names. This works out what several of your files have in common, then tells you whether a plain random split would put the same patient, speaker or video on both sides of your train and test line."
     >

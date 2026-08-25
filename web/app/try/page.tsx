@@ -6,7 +6,7 @@ import { Callout, Page, Prose, Section } from "@/components/ui";
 export default function TryPage() {
   return (
     <Page
-      eyebrow="Try it"
+      eyebrow="Tool 01"
       title="Run the model on a brain scan"
       lede="Drop in a scan, or pick one of the held-out examples. The whole thing happens on your own machine."
     >

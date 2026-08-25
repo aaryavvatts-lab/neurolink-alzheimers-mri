@@ -1,13 +1,13 @@
 "use client";
 
 import VolumeViewer from "@/components/VolumeViewer";
-import VentricleTool from "@/components/VentricleTool";
+import Link from "next/link";
 import { Callout, Page, Prose, Section } from "@/components/ui";
 
 export default function ExplorePage() {
   return (
     <Page
-      eyebrow="Explore"
+      eyebrow="Tool 02"
       title="Look through a real brain, one cut at a time"
       lede="Each scan in this dataset is 61 slices stacked up through the head. Stack them back together and you can cut through the brain in any direction, which is closer to how these scans are actually read."
     >
@@ -40,24 +40,39 @@ export default function ExplorePage() {
         </div>
       </Section>
 
-      <Section n="2" title="Measure the ventricles yourself">
-        <div className="mb-8 max-w-prose">
+      <Section n="2" title="What you are looking for">
+        <div className="grid gap-8 md:grid-cols-2">
           <Prose>
             <p>
-              Before reaching for a network, it is worth seeing how far a ruler gets you. The
-              standard sign of shrinking brain tissue on a scan is that the fluid spaces get
-              bigger relative to the brain around them.
+              The dark butterfly shape near the middle of the brain is the lateral ventricles, a
+              pair of fluid-filled chambers. In a healthy brain they are narrow. As tissue is
+              lost around them they widen, because the space has to go somewhere.
             </p>
             <p>
-              Move the threshold below and the tool marks every dark pixel inside the brain,
-              keeps the parts near the middle, and works out how much of the brain they take
-              up. This is roughly the measurement that goes into the simple comparison model on
-              the results page.
+              Load a healthy patient, note how thin that shape is, then load the moderate one and
+              look again at the same height. That difference is most of what any model working on
+              these scans has to go on.
+            </p>
+          </Prose>
+          <Prose>
+            <p>
+              The line chart underneath shows what the model thinks at every height through the
+              head, rather than one answer for the whole scan. Slide the axial control and the
+              marker moves with it.
+            </p>
+            <p>
+              Watch how unstable it is near the bottom of the stack, where the slices pass
+              through the eyes and the base of the skull and there is barely any brain in frame.
+              A single slice is a thin piece of evidence, which is why every number on this site
+              averages across a whole scan.
             </p>
           </Prose>
         </div>
 
-        <VentricleTool />
+        <p className="mt-8 max-w-prose p-body">
+          To measure the chambers yourself rather than eyeball them, use the{" "}
+          <Link href="/ventricles" className="link">ventricle lab</Link>.
+        </p>
       </Section>
     </Page>
   );
