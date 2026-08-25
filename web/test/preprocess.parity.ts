@@ -17,7 +17,9 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { preprocess } from "../lib/preprocess";
 
-const DIR = path.join(import.meta.dirname, "fixtures");
+// Resolved from the working directory so this runs the same whether tsx loads
+// the file as an ES module or compiles it to CommonJS.
+const DIR = path.resolve(process.cwd(), "test", "fixtures");
 const cases = JSON.parse(readFileSync(path.join(DIR, "cases.json"), "utf8"));
 
 // Python downsamples 224 -> 160 on the GPU with bilinear/align_corners=False.
@@ -57,7 +59,7 @@ for (const c of cases) {
 
 console.log(
   failures === 0
-    ? `\nAll ${cases.length} fixtures match — browser preprocessing reproduces the Python pipeline.`
+    ? `\nAll ${cases.length} fixtures match — the browser reproduces the Python pipeline.`
     : `\n${failures}/${cases.length} FAILED — the browser demo would feed the model out-of-distribution inputs.`
 );
 process.exit(failures === 0 ? 0 : 1);
