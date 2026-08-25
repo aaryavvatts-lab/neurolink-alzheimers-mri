@@ -1,0 +1,19 @@
+{
+  "subject_level_balanced_accuracy": 0.37638888888888883,
+  "slice_level_balanced_accuracy": 0.35378012877536325,
+  "binary_roc_auc": 0.826923076923077,
+  "chance_level": 0.25,
+  "compared_with": {
+    "leakage_honest_subject_split": {
+      "subject_level_balanced_accuracy": 0.35486111111111107,
+      "binary_roc_auc": 0.8711538461538463
+    },
+    "scratch_cnn_holdout": {
+      "subject_level_balanced_accuracy": 0.4069444444444444,
+      "binary_roc_auc": 0.9423076923076923
+    }
+  },
+  "best_real_model_balanced_accuracy": 0.4069444444444444,
+  "margin_over_probe": 0.030555555555555558,
+  "verdict": "The probe is uncomfortable. Removing the brain costs the model something, but not much, so part of the score is being carried by features outside the brain."
+}

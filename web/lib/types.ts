@@ -45,8 +45,14 @@ export interface Results {
     inflation: { accuracy_points: number; balanced_accuracy_points: number };
   };
   shortcut_probe?: {
-    subject_level_balanced_accuracy: number; slice_level_balanced_accuracy: number;
-    chance_level: number; verdict: string;
+    subject_level_balanced_accuracy: number;
+    slice_level_balanced_accuracy: number;
+    binary_roc_auc?: number | null;
+    chance_level: number;
+    compared_with?: Record<string, { subject_level_balanced_accuracy: number; binary_roc_auc: number | null }>;
+    best_real_model_balanced_accuracy?: number | null;
+    margin_over_probe?: number | null;
+    verdict: string;
   };
   cam_ventricle_overlap?: {
     n_slices: number;

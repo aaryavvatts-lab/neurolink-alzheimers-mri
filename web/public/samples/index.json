@@ -8,10 +8,10 @@
     "raw": "samples/raw/Non_OAS1_0007_128.jpg",
     "pre": "samples/pre/Non_OAS1_0007_128.png",
     "pytorch_probs": [
-      0.8903,
-      0.0181,
-      0.0143,
-      0.0773
+      0.9105,
+      0.0358,
+      0.0011,
+      0.0525
     ],
     "pytorch_pred": 0
   },
@@ -24,10 +24,10 @@
     "raw": "samples/raw/Non_OAS1_0026_130.jpg",
     "pre": "samples/pre/Non_OAS1_0026_130.png",
     "pytorch_probs": [
-      0.9362,
-      0.0079,
-      0.0174,
-      0.0385
+      0.7537,
+      0.0872,
+      0.043,
+      0.1161
     ],
     "pytorch_pred": 0
   },
@@ -40,10 +40,10 @@
     "raw": "samples/raw/Non_OAS1_0029_134.jpg",
     "pre": "samples/pre/Non_OAS1_0029_134.png",
     "pytorch_probs": [
-      0.9118,
-      0.0052,
-      0.007,
-      0.076
+      0.8057,
+      0.1096,
+      0.0013,
+      0.0834
     ],
     "pytorch_pred": 0
   },
@@ -56,10 +56,10 @@
     "raw": "samples/raw/Non_OAS1_0043_141.jpg",
     "pre": "samples/pre/Non_OAS1_0043_141.png",
     "pytorch_probs": [
-      0.94,
-      0.0007,
-      0.0097,
-      0.0496
+      0.8302,
+      0.0364,
+      0.0031,
+      0.1303
     ],
     "pytorch_pred": 0
   },
@@ -72,10 +72,10 @@
     "raw": "samples/raw/Non_OAS1_0049_129.jpg",
     "pre": "samples/pre/Non_OAS1_0049_129.png",
     "pytorch_probs": [
-      0.9304,
-      0.004,
-      0.0134,
-      0.0522
+      0.8507,
+      0.0457,
+      0.0022,
+      0.1014
     ],
     "pytorch_pred": 0
   },
@@ -88,10 +88,10 @@
     "raw": "samples/raw/Non_OAS1_0051_130.jpg",
     "pre": "samples/pre/Non_OAS1_0051_130.png",
     "pytorch_probs": [
-      0.9325,
-      0.0054,
-      0.0131,
-      0.0491
+      0.6455,
+      0.1758,
+      0.0181,
+      0.1606
     ],
     "pytorch_pred": 0
   },
@@ -104,10 +104,10 @@
     "raw": "samples/raw/Non_OAS1_0062_139.jpg",
     "pre": "samples/pre/Non_OAS1_0062_139.png",
     "pytorch_probs": [
-      0.4849,
-      0.0188,
-      0.3436,
-      0.1527
+      0.4706,
+      0.1451,
+      0.2691,
+      0.1152
     ],
     "pytorch_pred": 0
   },
@@ -120,12 +120,12 @@
     "raw": "samples/raw/Non_OAS1_0070_125.jpg",
     "pre": "samples/pre/Non_OAS1_0070_125.png",
     "pytorch_probs": [
-      0.8643,
-      0.0486,
-      0.0048,
-      0.0823
+      0.3011,
+      0.3666,
+      0.1964,
+      0.1359
     ],
-    "pytorch_pred": 0
+    "pytorch_pred": 1
   },
   {
     "id": "Verymild_OAS1_0003_140",
@@ -136,12 +136,12 @@
     "raw": "samples/raw/Verymild_OAS1_0003_140.jpg",
     "pre": "samples/pre/Verymild_OAS1_0003_140.png",
     "pytorch_probs": [
-      0.0217,
-      0.7427,
-      0.0947,
-      0.1408
+      0.0364,
+      0.1648,
+      0.6642,
+      0.1346
     ],
-    "pytorch_pred": 1
+    "pytorch_pred": 2
   },
   {
     "id": "Verymild_OAS1_0060_134",
@@ -152,10 +152,10 @@
     "raw": "samples/raw/Verymild_OAS1_0060_134.jpg",
     "pre": "samples/pre/Verymild_OAS1_0060_134.png",
     "pytorch_probs": [
-      0.294,
-      0.6231,
-      0.0106,
-      0.0723
+      0.0415,
+      0.8116,
+      0.0419,
+      0.105
     ],
     "pytorch_pred": 1
   },
@@ -168,10 +168,10 @@
     "raw": "samples/raw/Verymild_OAS1_0082_134.jpg",
     "pre": "samples/pre/Verymild_OAS1_0082_134.png",
     "pytorch_probs": [
-      0.9447,
-      0.0033,
-      0.0028,
-      0.0492
+      0.7896,
+      0.1172,
+      0.0011,
+      0.0921
     ],
     "pytorch_pred": 0
   },
@@ -184,12 +184,12 @@
     "raw": "samples/raw/Verymild_OAS1_0098_136.jpg",
     "pre": "samples/pre/Verymild_OAS1_0098_136.png",
     "pytorch_probs": [
-      0.3545,
-      0.3169,
-      0.193,
-      0.1355
+      0.0278,
+      0.4168,
+      0.386,
+      0.1694
     ],
-    "pytorch_pred": 0
+    "pytorch_pred": 1
   },
   {
     "id": "Verymild_OAS1_0179_126",
@@ -200,12 +200,12 @@
     "raw": "samples/raw/Verymild_OAS1_0179_126.jpg",
     "pre": "samples/pre/Verymild_OAS1_0179_126.png",
     "pytorch_probs": [
-      0.3372,
-      0.5476,
-      0.0109,
-      0.1043
+      0.0309,
+      0.1978,
+      0.6984,
+      0.0729
     ],
-    "pytorch_pred": 1
+    "pytorch_pred": 2
   },
   {
     "id": "Verymild_OAS1_0238_128",
@@ -216,12 +216,12 @@
     "raw": "samples/raw/Verymild_OAS1_0238_128.jpg",
     "pre": "samples/pre/Verymild_OAS1_0238_128.png",
     "pytorch_probs": [
-      0.9369,
-      0.0064,
-      0.0152,
-      0.0415
+      0.2769,
+      0.5725,
+      0.045,
+      0.1057
     ],
-    "pytorch_pred": 0
+    "pytorch_pred": 1
   },
   {
     "id": "Verymild_OAS1_0263_126",
@@ -232,12 +232,12 @@
     "raw": "samples/raw/Verymild_OAS1_0263_126.jpg",
     "pre": "samples/pre/Verymild_OAS1_0263_126.png",
     "pytorch_probs": [
-      0.7394,
-      0.1663,
-      0.0147,
-      0.0796
+      0.0898,
+      0.6586,
+      0.1173,
+      0.1343
     ],
-    "pytorch_pred": 0
+    "pytorch_pred": 1
   },
   {
     "id": "Verymild_OAS1_0272_132",
@@ -248,12 +248,12 @@
     "raw": "samples/raw/Verymild_OAS1_0272_132.jpg",
     "pre": "samples/pre/Verymild_OAS1_0272_132.png",
     "pytorch_probs": [
-      0.1266,
-      0.3595,
-      0.3186,
-      0.1953
+      0.0187,
+      0.0268,
+      0.8034,
+      0.1511
     ],
-    "pytorch_pred": 1
+    "pytorch_pred": 2
   },
   {
     "id": "Mild_OAS1_0052_123",
@@ -264,10 +264,10 @@
     "raw": "samples/raw/Mild_OAS1_0052_123.jpg",
     "pre": "samples/pre/Mild_OAS1_0052_123.png",
     "pytorch_probs": [
-      0.0906,
-      0.8205,
-      0.0034,
-      0.0854
+      0.215,
+      0.4785,
+      0.2457,
+      0.0609
     ],
     "pytorch_pred": 1
   },
@@ -280,12 +280,12 @@
     "raw": "samples/raw/Mild_OAS1_0184_138.jpg",
     "pre": "samples/pre/Mild_OAS1_0184_138.png",
     "pytorch_probs": [
-      0.5536,
-      0.3574,
-      0.0123,
-      0.0767
+      0.0163,
+      0.1467,
+      0.7394,
+      0.0976
     ],
-    "pytorch_pred": 0
+    "pytorch_pred": 2
   },
   {
     "id": "Mild_OAS1_0269_140",
@@ -296,10 +296,10 @@
     "raw": "samples/raw/Mild_OAS1_0269_140.jpg",
     "pre": "samples/pre/Mild_OAS1_0269_140.png",
     "pytorch_probs": [
-      0.0524,
-      0.8344,
-      0.0365,
-      0.0767
+      0.0235,
+      0.5448,
+      0.3334,
+      0.0983
     ],
     "pytorch_pred": 1
   },
@@ -312,11 +312,11 @@
     "raw": "samples/raw/Moderate_OAS1_0308_132.jpg",
     "pre": "samples/pre/Moderate_OAS1_0308_132.png",
     "pytorch_probs": [
-      0.0539,
-      0.7244,
-      0.0938,
-      0.1278
+      0.0116,
+      0.0826,
+      0.833,
+      0.0728
     ],
-    "pytorch_pred": 1
+    "pytorch_pred": 2
   }
 ]

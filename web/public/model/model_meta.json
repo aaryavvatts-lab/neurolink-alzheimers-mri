@@ -1,5 +1,5 @@
 {
-  "arch": "resnet18",
+  "arch": "scratch_cnn",
   "input_size": 160,
   "mean": 0.449,
   "std": 0.226,
@@ -34,22 +34,22 @@
   },
   "parity": {
     "fp32": {
-      "max_abs_logit_diff": 2.8252601623535156e-05,
-      "mean_abs_logit_diff": 4.065737812197767e-06,
+      "max_abs_logit_diff": 1.0371208190917969e-05,
+      "mean_abs_logit_diff": 1.6840094758663327e-06,
       "argmax_agreement": 1.0,
-      "cam_correlation": 0.9999999999926176,
-      "size_mb": 44.72
+      "cam_correlation": 0.9999999999981216,
+      "size_mb": 9.42
     },
     "int8": {
-      "max_abs_logit_diff": 0.3758692741394043,
-      "mean_abs_logit_diff": 0.06322973966598511,
-      "argmax_agreement": 0.9866666666666667,
-      "cam_correlation": 0.9982991800015508,
-      "size_mb": 11.49
+      "max_abs_logit_diff": 0.16644585132598877,
+      "mean_abs_logit_diff": 0.043469879776239395,
+      "argmax_agreement": 0.9816666666666667,
+      "cam_correlation": 0.9997030302764626,
+      "size_mb": 2.47
     }
   },
   "checkpoint": {
-    "val_balanced_accuracy": 0.5337217107786728,
-    "epoch": 3
+    "val_balanced_accuracy": 0.6403631705846896,
+    "epoch": 4
   }
 }

@@ -1,0 +1,37 @@
+{
+  "n_slices": 400,
+  "region_area": "matched per slice to the ventricle mask",
+  "mean_ventricle_area_frac": 0.08901133011798469,
+  "cam_resolution_note": "CAM is computed at the backbone final feature resolution (5x5 for a 160px input) then bilinearly upsampled, so it is inherently coarse. That bounds how high Dice can go regardless of alignment.",
+  "trained_model": {
+    "dice": 0.08392263058282305,
+    "iou": 0.04689333604085383
+  },
+  "control_untrained_cnn": {
+    "dice": 0.07095351440453056,
+    "iou": 0.04025573070436727
+  },
+  "control_centred_blob": {
+    "dice": 0.28830891277455073,
+    "iou": 0.17986656362580786
+  },
+  "by_true_class": {
+    "Non": {
+      "n": 298,
+      "dice": 0.09527341556465473
+    },
+    "Very mild": {
+      "n": 70,
+      "dice": 0.0475195776261455
+    },
+    "Mild": {
+      "n": 25,
+      "dice": 0.03723921511624101
+    },
+    "Moderate": {
+      "n": 7,
+      "dice": 0.1314605118751285
+    }
+  },
+  "verdict": "Trained CAM does NOT beat the controls, its apparent focus on the ventricles is explained by centre bias, not learned anatomy."
+}

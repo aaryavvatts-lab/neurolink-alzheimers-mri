@@ -9,6 +9,7 @@ import ConfusionMatrix from "@/components/charts/ConfusionMatrix";
 import RocCurve from "@/components/charts/RocCurve";
 import CoverageSlider from "@/components/charts/CoverageSlider";
 import SliceAccuracy from "@/components/charts/SliceAccuracy";
+import ModelCompare from "@/components/charts/ModelCompare";
 
 export default function ResultsPage() {
   const { data: r, error } = useResults();
@@ -53,7 +54,48 @@ export default function ResultsPage() {
             </div>
           </Section>
 
-          <Section n="2" title="Where the mistakes go">
+          <Section n="2" title="Four ways of doing it, side by side">
+            <div className="mb-6 max-w-prose">
+              <Prose>
+                <p>
+                  It is easy to train one model, get a number, and stop. The number only means
+                  something next to other numbers, so here are four approaches measured on the
+                  same patients with the same split.
+                </p>
+              </Prose>
+            </div>
+
+            <ModelCompare r={r} />
+
+            <div className="mt-6 max-w-prose space-y-4">
+              <Callout tone="warn" title="The bottom bar is the one to look at">
+                That is the same network trained on pictures with the brain rubbed out, leaving
+                only the skull rim and the background. There is no information about dementia
+                in those images. It should score near guessing. It does not.
+                {r.shortcut_probe?.margin_over_probe != null && (
+                  <> The best real model beats it by{" "}
+                  {(r.shortcut_probe.margin_over_probe * 100).toFixed(1)} percentage points,
+                  which is not much of a gap to hang a diagnosis on.</>)}
+              </Callout>
+
+              <Prose>
+                <p>
+                  Head size, skull thickness and the shape of the scalp all change with age, and
+                  age is the strongest risk factor for dementia there is. So a model can pick up
+                  a real correlation without ever looking at brain tissue. That is not cheating
+                  by the model. It is a gap in what the labels can tell it apart from.
+                </p>
+                <p>
+                  The other surprise is the top bar. A small network trained from scratch beats
+                  a ResNet-18 that had already learned from millions of photographs, on every
+                  measure here. Pretraining on photographs is usually treated as free
+                  improvement. On 242 people of grey medical images, it was not.
+                </p>
+              </Prose>
+            </div>
+          </Section>
+
+          <Section n="3" title="Where the mistakes go">
             <ConfusionMatrix
               slice={run.slice_level.confusion_matrix}
               subject={run.subject_level.confusion_matrix}
@@ -94,7 +136,7 @@ export default function ResultsPage() {
             </div>
           </Section>
 
-          <Section n="3" title="The question it can actually answer">
+          <Section n="4" title="The question it can actually answer">
             <RocCurve
               points={run.roc_subject ?? []}
               auc={run.subject_level.binary_screening.roc_auc}
@@ -121,7 +163,7 @@ export default function ResultsPage() {
             </div>
           </Section>
 
-          <Section n="4" title="Letting the model say it does not know">
+          <Section n="5" title="Letting the model say it does not know">
             <CoverageSlider
               points={run.abstention_subject.map((a) => ({
                 coverage: a.coverage, accuracy: a.accuracy, min_confidence: a.min_confidence,
@@ -146,7 +188,7 @@ export default function ResultsPage() {
           </Section>
 
           {run.accuracy_by_slice && run.accuracy_by_slice.length > 5 && (
-            <Section n="5" title="Not every slice is equally useful">
+            <Section n="6" title="Not every slice is equally useful">
               <SliceAccuracy points={run.accuracy_by_slice.map((p) => ({
                 slice: p.slice, accuracy: p.accuracy, n: p.n,
               }))} />
@@ -165,7 +207,7 @@ export default function ResultsPage() {
           )}
 
           {r.cam_ventricle_overlap && (
-            <Section n="6" title="Is it looking at the right thing?">
+            <Section n="7" title="Is it looking at the right thing?">
               <div className="max-w-prose">
                 <Prose>
                   <p>
@@ -224,7 +266,7 @@ export default function ResultsPage() {
           )}
 
           {r.shortcut_probe && (
-            <Section n="7" title="A check that it is reading the brain at all">
+            <Section n="8" title="A closer look at the brain-removed check">
               <div className="max-w-prose">
                 <Prose>
                   <p>
@@ -240,26 +282,36 @@ export default function ResultsPage() {
                   </p>
                 </Prose>
               </div>
-              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <Stat
-                  tone={r.shortcut_probe.subject_level_balanced_accuracy <
-                        r.shortcut_probe.chance_level + 0.15 ? "forest" : "brick"}
-                  value={fmt(r.shortcut_probe.subject_level_balanced_accuracy)}
-                  label="Score with the brain removed" />
+              <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <Stat tone="brick"
+                      value={fmt(r.shortcut_probe.subject_level_balanced_accuracy)}
+                      label="Score with the brain erased" />
                 <Stat value={r.shortcut_probe.chance_level.toFixed(2)}
-                      label="Score you would get by guessing" />
+                      label="Score from pure guessing" />
+                <Stat value={fmt(r.shortcut_probe.best_real_model_balanced_accuracy)}
+                      label="Best model that can see the brain" />
+                <Stat tone="brick"
+                      value={r.shortcut_probe.margin_over_probe != null
+                        ? `+${(r.shortcut_probe.margin_over_probe * 100).toFixed(1)} pts`
+                        : "n/a"}
+                      label="All the brain is worth, on this data" />
               </div>
               <div className="mt-6 max-w-prose">
-                <Callout tone={r.shortcut_probe.subject_level_balanced_accuracy <
-                               r.shortcut_probe.chance_level + 0.15 ? "good" : "warn"}>
-                  {r.shortcut_probe.verdict}
-                </Callout>
+                <Callout tone="warn">{r.shortcut_probe.verdict}</Callout>
+                <p className="mt-4 p-body">
+                  I had originally written this check to pass if the brain-removed score sat
+                  below guessing plus fifteen points, and by that rule it passed. The rule was
+                  wrong. What matters is not the distance from guessing, it is the distance from
+                  the real model, and that distance turned out to be small. Comparing against a
+                  round number I picked myself would have let me report a clean pass for
+                  something that is not clean.
+                </p>
               </div>
             </Section>
           )}
 
           {r.ventricle_baseline && (
-            <Section n="8" title="Does the network beat a ruler?">
+            <Section n="9" title="Does the network beat a ruler?">
               <div className="max-w-prose">
                 <Prose>
                   <p>
@@ -285,7 +337,7 @@ export default function ResultsPage() {
             </Section>
           )}
 
-          <Section n="9" title="What would have to change for this to be worth anything">
+          <Section n="10" title="What would have to change for this to be worth anything">
             <div className="grid gap-x-10 gap-y-6 md:grid-cols-2">
               {[
                 ["347 people is a small study.",

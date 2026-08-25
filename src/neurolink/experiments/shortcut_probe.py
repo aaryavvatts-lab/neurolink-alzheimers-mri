@@ -44,25 +44,71 @@ def main() -> None:
     print_report(e)
 
     bal = e["subject_level"]["balanced_accuracy"]
+    auc = e["subject_level"]["binary_screening"]["roc_auc"]
     chance = 0.25
-    verdict = (
-        "PASS -- brain-removed images carry little label information, so the main "
-        "results are unlikely to be driven by an extra-cerebral confound."
-        if bal < chance + 0.15 else
-        "FAIL -- the label is substantially predictable WITHOUT the brain. The main "
-        "results are contaminated by a non-anatomical shortcut and must not be "
-        "interpreted as diagnosis."
-    )
+
+    # Comparing against a fixed "chance plus a bit" line is the wrong test.
+    # What matters is how the brain-removed model does against the real model
+    # trained on the same split. If erasing the brain costs almost nothing, the
+    # real model was not using the brain for much, whatever its absolute score.
+    from ..evaluate import evaluate_run
+
+    comparisons = {}
+    for name in ("leakage_honest_subject_split", "scratch_cnn_holdout",
+                 "primary_resnet18_sampler_only"):
+        d = REPO / "runs" / name
+        if (d / "test_predictions.npz").exists():
+            c = evaluate_run(d)
+            comparisons[name] = {
+                "subject_level_balanced_accuracy": c["subject_level"]["balanced_accuracy"],
+                "binary_roc_auc": c["subject_level"]["binary_screening"]["roc_auc"],
+            }
+
+    best = max(comparisons.values(), key=lambda v: v["subject_level_balanced_accuracy"],
+               default=None)
+    margin = (best["subject_level_balanced_accuracy"] - bal) if best else None
+
+    if margin is None:
+        verdict = ("No comparison run was available, so this number can only be read "
+                   "against chance.")
+    elif margin < 0.03:
+        verdict = (
+            "The probe FAILS. A model that cannot see the brain scores about as well as one "
+            "that can, so a large part of the apparent skill is coming from something outside "
+            "the brain: head size, skull thickness, or some other trait that happens to track "
+            "with age and diagnosis. Any result close to this level should not be described as "
+            "reading anatomy."
+        )
+    elif margin < 0.08:
+        verdict = (
+            "The probe is uncomfortable. Removing the brain costs the model something, but not "
+            "much, so part of the score is being carried by features outside the brain."
+        )
+    else:
+        verdict = (
+            "The probe passes. Removing the brain costs the model a clear amount, so the real "
+            "model is using anatomy rather than an incidental cue."
+        )
+
     out = {
         "subject_level_balanced_accuracy": bal,
         "slice_level_balanced_accuracy": e["slice_level"]["balanced_accuracy"],
+        "binary_roc_auc": auc,
         "chance_level": chance,
+        "compared_with": comparisons,
+        "best_real_model_balanced_accuracy": (
+            best["subject_level_balanced_accuracy"] if best else None),
+        "margin_over_probe": margin,
         "verdict": verdict,
     }
     jsonio.write(REPO / "reports" / "shortcut_probe.json", out)
     print(f"\n{'=' * 72}\nSHORTCUT PROBE (brain removed)\n{'=' * 72}")
-    print(f"  subject-level balanced accuracy: {bal:.4f}  (chance = {chance:.2f})")
-    print(f"  {verdict}")
+    print(f"  brain removed, subject balanced accuracy: {bal:.4f}  (chance {chance:.2f})")
+    for k, v in comparisons.items():
+        print(f"  {k:34s} {v['subject_level_balanced_accuracy']:.4f}")
+    if margin is not None:
+        print(f"  best real model beats the probe by {margin:+.4f}")
+    print(f"\n  {verdict}")
 
 
 if __name__ == "__main__":

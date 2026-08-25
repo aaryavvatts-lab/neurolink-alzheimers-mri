@@ -141,7 +141,67 @@ export default function Home() {
             </div>
           </Section>
 
-          <Section n="4" id="works" title="So does anything work?">
+          <Section n="4" id="honest" title="Two things I did not expect">
+            <div className="grid gap-8 md:grid-cols-2">
+              <div>
+                <p className="font-serif text-[1.125rem] leading-snug text-ink">
+                  Rubbing the brain out barely hurt the model.
+                </p>
+                <div className="mt-3">
+                  <Prose>
+                    <p>
+                      I trained the same network again on pictures with the brain erased,
+                      leaving only the skull rim and the black background. Those images hold
+                      nothing about dementia, so the score should collapse to guessing.
+                    </p>
+                    <p>
+                      It reached{" "}
+                      {r.shortcut_probe
+                        ? `${(r.shortcut_probe.subject_level_balanced_accuracy * 100).toFixed(1)} percent`
+                        : "well above guessing"}
+                      , against 25 percent for guessing, and the best model that could see the
+                      brain only beat it by{" "}
+                      {r.shortcut_probe?.margin_over_probe != null
+                        ? `${(r.shortcut_probe.margin_over_probe * 100).toFixed(1)} points`
+                        : "a little"}
+                      . Head size and skull shape change with age, and age drives dementia risk,
+                      so a model can ride that correlation without reading any tissue.
+                    </p>
+                  </Prose>
+                </div>
+              </div>
+
+              <div>
+                <p className="font-serif text-[1.125rem] leading-snug text-ink">
+                  The small network beat the big pretrained one.
+                </p>
+                <div className="mt-3">
+                  <Prose>
+                    <p>
+                      Starting from a ResNet-18 that already knew about photographs is the
+                      standard move, and it is usually treated as free improvement. Here a
+                      plain network with a fifth of the parameters, trained from nothing, won
+                      on every measure I looked at.
+                    </p>
+                    <p>
+                      With 242 people to learn from, the bigger model had more room to memorise
+                      and not much more to learn. I would not read this as a rule about
+                      pretraining. I would read it as a reason to check rather than assume.
+                    </p>
+                  </Prose>
+                </div>
+              </div>
+            </div>
+
+            <p className="mt-8 max-w-prose p-body">
+              Both of these are the kind of result that a project reporting one accuracy figure
+              never finds, because you only see them if you build the comparison on purpose.
+              The <Link href="/results" className="link">results page</Link> has all four
+              approaches measured side by side.
+            </p>
+          </Section>
+
+          <Section n="5" id="works" title="So does anything work?">
             <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
               <Prose>
                 <p>
@@ -176,7 +236,7 @@ export default function Home() {
             </div>
           </Section>
 
-          <Section n="5" id="tools" title="Three things you can actually do here">
+          <Section n="6" id="tools" title="Three things you can actually do here">
             <div className="max-w-prose">
               <Prose>
                 <p>
@@ -230,7 +290,7 @@ export default function Home() {
             </div>
           </Section>
 
-          <Section n="6" id="pipeline" title="What the pictures look like before the model sees them">
+          <Section n="7" id="pipeline" title="What the pictures look like before the model sees them">
             <div className="max-w-prose">
               <Prose>
                 <p>
