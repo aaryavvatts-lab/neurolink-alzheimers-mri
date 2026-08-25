@@ -1,14 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useResults } from "@/lib/useResults";
+import { results as r } from "@/lib/results";
 import { Callout, Figure, Page, Prose, Ref, Section, Stat } from "@/components/ui";
-import { Loading, LoadError } from "@/components/Loading";
 import LeakageBars from "@/components/charts/LeakageBars";
 import DatasetBars from "@/components/charts/DatasetBars";
 
 export default function Home() {
-  const { data: r, error } = useResults();
 
   const lk = r?.leakage_experiment;
   const primary = r?.primary_run ? r.runs[r.primary_run] : undefined;
@@ -20,9 +18,6 @@ export default function Home() {
       title="I tried to read Alzheimer's stage from a brain scan. Most of my accuracy was fake."
       lede="A short video said you could build this in a weekend: grab 86,000 brain MRI images, train a network, report your score. I did that. The score was 99 percent. Then I checked where the images came from, and almost all of that number fell apart."
     >
-      {error && <div className="py-8"><LoadError /></div>}
-      {!r && !error && <Loading />}
-
       {r && (
         <>
           <Section n="1" id="short" title="The short version">

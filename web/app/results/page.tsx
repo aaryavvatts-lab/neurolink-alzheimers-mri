@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useResults } from "@/lib/useResults";
+import { results as r } from "@/lib/results";
 import { SHORT, fmt } from "@/lib/types";
 import { Callout, Chart, Figure, Page, Prose, Section, Stat } from "@/components/ui";
-import { Loading, LoadError } from "@/components/Loading";
 import ConfusionMatrix from "@/components/charts/ConfusionMatrix";
 import RocCurve from "@/components/charts/RocCurve";
 import CoverageSlider from "@/components/charts/CoverageSlider";
@@ -12,7 +11,6 @@ import SliceAccuracy from "@/components/charts/SliceAccuracy";
 import ModelCompare from "@/components/charts/ModelCompare";
 
 export default function ResultsPage() {
-  const { data: r, error } = useResults();
   const key = r?.primary_run;
   const run = key ? r!.runs[key] : undefined;
 
@@ -22,9 +20,6 @@ export default function ResultsPage() {
       title="What it can do, and where it gives up"
       lede="Every number here is measured on patients the model never trained on, and scored one answer per patient rather than one answer per picture."
     >
-      {error && <div className="py-8"><LoadError /></div>}
-      {!r && !error && <Loading />}
-
       {r && run && (
         <>
           <Section n="1" title="Headline numbers">

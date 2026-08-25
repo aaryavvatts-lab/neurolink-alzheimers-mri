@@ -1,6 +1,6 @@
 "use client";
 
-import { useResults } from "@/lib/useResults";
+import { results as r } from "@/lib/results";
 import { Callout, Figure, Page, Prose, Ref, Section } from "@/components/ui";
 import { Loading } from "@/components/Loading";
 
@@ -18,7 +18,6 @@ const STEPS: [string, string][] = [
 ];
 
 export default function MethodPage() {
-  const { data: r } = useResults();
 
   return (
     <Page

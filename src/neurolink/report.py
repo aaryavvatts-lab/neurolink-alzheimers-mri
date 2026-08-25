@@ -65,12 +65,12 @@ def main() -> None:
             e = evaluate_run(rd)
         except FileNotFoundError:
             continue
-        results["runs"][rd.name] = {
-            k: e[k] for k in ("model", "split_mode", "fold", "mask_mode", "leaking_split",
-                              "minutes", "best_epoch", "n_train_subjects", "n_test_subjects",
-                              "slice_level", "subject_level", "calibration",
-                              "abstention_subject", "subject_predictions")
-        }
+        keep = ("model", "split_mode", "fold", "mask_mode", "leaking_split",
+                "minutes", "best_epoch", "n_train_subjects", "n_test_subjects",
+                "slice_level", "subject_level", "calibration",
+                "abstention_subject", "subject_predictions",
+                "roc_subject", "roc_slice", "reliability_slice", "accuracy_by_slice")
+        results["runs"][rd.name] = {k: e[k] for k in keep if k in e}
         figures.confusion(np.array(e["subject_level"]["confusion_matrix"]),
                           f"{rd.name}, subject level", figures.FIG / f"cm_subject_{rd.name}.png")
         figures.confusion(np.array(e["slice_level"]["confusion_matrix"]),
@@ -111,10 +111,28 @@ def main() -> None:
 
     web = REPO / "web" / "public"
     if web.exists():
+        # The full file stays downloadable for anyone who wants the raw numbers.
         shutil.copy(out, web / "results.json")
         (web / "figures").mkdir(exist_ok=True)
         for f in figures.FIG.glob("*.png"):
             shutil.copy(f, web / "figures" / f.name)
+
+        # A trimmed copy gets imported at build time so the pages render their
+        # text and numbers into the HTML itself. Without that the site is an
+        # empty shell until JavaScript runs, which is bad for search engines and
+        # useless to anyone browsing without it. Three fields nothing on the site
+        # reads are dropped, which is most of the weight.
+        DROP = ("subject_predictions", "roc_slice", "reliability_slice")
+        trimmed = json.loads(json.dumps(results))
+        for run in trimmed["runs"].values():
+            for k in DROP:
+                run.pop(k, None)
+        data_dir = REPO / "web" / "data"
+        data_dir.mkdir(exist_ok=True)
+        jsonio.write(data_dir / "results.json", trimmed)
+        full_kb = len(json.dumps(results)) / 1024
+        trim_kb = len(json.dumps(trimmed)) / 1024
+        print(f"  bundled copy {trim_kb:.0f} KB (full file {full_kb:.0f} KB)")
 
     print(f"Wrote {out}  ({len(results['runs'])} runs)")
     if honest:
