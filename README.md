@@ -10,6 +10,28 @@ appears to work and how well it actually works, a gap created entirely by how th
 > ⚠️ Research demonstration. Not a medical device, not validated for clinical use, and not fit to
 > inform any decision about any real person.
 
+**Live site:** https://neurolink-479xxp6g7-scholarly-work-projects.vercel.app
+
+## What the runs actually found
+
+| Approach | 4-stage balanced accuracy | Dementia or not (AUC) |
+|---|---|---|
+| Split by slice, the usual way | 0.989 | 1.000 |
+| Small CNN trained from scratch | **0.407** | **0.942** |
+| ResNet-18 pretrained on photographs | 0.355 | 0.871 |
+| Same network, brain erased | 0.376 | 0.827 |
+| Eight measurements and a plain fit | 0.333 | 0.854 |
+
+Three things worth reading twice:
+
+1. Splitting by slice instead of by patient took balanced accuracy from 0.337 to
+   0.989. Yagis and colleagues found about the same thing on this dataset in 2021.
+2. Erasing the brain barely hurt. The best real model beats a brain-removed
+   control by 0.031, so a good part of the apparent skill is riding on head size
+   and skull shape, which track age, which drives dementia risk.
+3. The small network beat the pretrained one on every measure, at a fifth of the
+   size. Pretraining on photographs is usually assumed to help. Here it did not.
+
 ---
 
 ## The three things everyone gets wrong
