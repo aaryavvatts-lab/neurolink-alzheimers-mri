@@ -3,9 +3,9 @@
 Trains the SAME architecture, for the same number of epochs, with the same seed,
 on two splits of the same data that differ in exactly one respect:
 
-  A. random_slice -- slices shuffled individually. Every one of the 347 subjects
+  A. random_slice, slices shuffled individually. Every one of the 347 subjects
      ends up in both train and test.
-  B. holdout      -- split by subject. No person crosses the boundary.
+  B. holdout     , split by subject. No person crosses the boundary.
 
 Any difference in the resulting scores is caused by leakage and nothing else.
 This is the number the website leads with, because it is the reason a "99%
@@ -87,7 +87,7 @@ def main() -> None:
     out = REPO / "reports" / "leakage_experiment.json"
     jsonio.write(out, comparison)
 
-    print(f"\n{'=' * 72}\nLEAKAGE EXPERIMENT — identical model, identical epochs\n{'=' * 72}")
+    print(f"\n{'=' * 72}\nLEAKAGE EXPERIMENT, identical model, identical epochs\n{'=' * 72}")
     print(f"  random slice split (leaky)  balanced acc: "
           f"{leaky['balanced_accuracy']:.4f}   accuracy: {leaky['accuracy']:.4f}")
     print(f"  subject split (honest)      balanced acc: "

@@ -3,8 +3,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { preprocess } from "@/lib/preprocess";
 import { camToRGBA, getMeta, loadModel, predict, type Prediction } from "@/lib/model";
-import { SHORT } from "@/lib/types";
-import { Note } from "./ui";
+import { SHORT, FULL } from "@/lib/types";
+import { STAGE } from "./charts/primitives";
+import { Callout } from "./ui";
 
 interface Sample {
   id: string; subject: string; slice: number;
@@ -12,8 +13,6 @@ interface Sample {
   raw: string; pre: string;
   pytorch_probs: number[]; pytorch_pred: number;
 }
-
-const TONE = ["#3ddc97", "#f5c542", "#ff9f45", "#ff5c5c"];
 
 function grayToImageData(gray: Float32Array, size: number): ImageData {
   const img = new ImageData(size, size);
@@ -24,13 +23,13 @@ function grayToImageData(gray: Float32Array, size: number): ImageData {
   return img;
 }
 
-async function fileToImageData(src: string | File): Promise<ImageData> {
+async function toImageData(src: string | File): Promise<ImageData> {
   const url = typeof src === "string" ? src : URL.createObjectURL(src);
   const img = new Image();
   img.crossOrigin = "anonymous";
   await new Promise<void>((res, rej) => {
     img.onload = () => res();
-    img.onerror = () => rej(new Error("could not decode image"));
+    img.onerror = () => rej(new Error("That file could not be read as an image."));
     img.src = url;
   });
   const c = document.createElement("canvas");
@@ -44,230 +43,266 @@ async function fileToImageData(src: string | File): Promise<ImageData> {
 
 export default function Demo() {
   const [status, setStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
-  const [statusMsg, setStatusMsg] = useState("");
+  const [msg, setMsg] = useState("");
   const [samples, setSamples] = useState<Sample[]>([]);
   const [active, setActive] = useState<Sample | null>(null);
   const [result, setResult] = useState<Prediction | null>(null);
-  const [showCam, setShowCam] = useState(true);
+  const [overlay, setOverlay] = useState(0.6);
   const [busy, setBusy] = useState(false);
-  const [uploadName, setUploadName] = useState<string | null>(null);
-  const [parity, setParity] = useState<{ maxDiff: number; agree: boolean } | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const [source, setSource] = useState<string | null>(null);
+  const [check, setCheck] = useState<{ diff: number; agree: boolean } | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const lastGray = useRef<Float32Array | null>(null);
+  const grayRef = useRef<Float32Array | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetch("/samples/index.json")
       .then((r) => (r.ok ? r.json() : []))
-      .then((s: Sample[]) => setSamples(s))
+      .then(setSamples)
       .catch(() => setSamples([]));
   }, []);
 
-  const ensureModel = useCallback(async () => {
-    if (status === "ready") return true;
-    setStatus("loading");
-    try {
-      await loadModel((m) => setStatusMsg(m));
-      setStatus("ready");
-      return true;
-    } catch (e) {
-      setStatus("error");
-      setStatusMsg(e instanceof Error ? e.message : String(e));
-      return false;
-    }
-  }, [status]);
-
-  const draw = useCallback((gray: Float32Array, p: Prediction | null, overlay: boolean) => {
+  const draw = useCallback((gray: Float32Array, p: Prediction | null, alpha: number) => {
     const cv = canvasRef.current;
     if (!cv) return;
-    const size = Math.sqrt(gray.length) | 0;
+    const size = Math.round(Math.sqrt(gray.length));
     cv.width = size; cv.height = size;
     const ctx = cv.getContext("2d")!;
     ctx.putImageData(
-      overlay && p ? camToRGBA(p.cam, p.camH, p.camW, gray, size) : grayToImageData(gray, size),
+      p && alpha > 0.02
+        ? camToRGBA(p.cam, p.camH, p.camW, gray, size, alpha)
+        : grayToImageData(gray, size),
       0, 0
     );
   }, []);
 
-  const run = useCallback(async (src: string | File, sample: Sample | null) => {
-    setBusy(true); setParity(null);
+  const run = useCallback(async (src: string | File, sample: Sample | null, label: string) => {
+    setBusy(true); setCheck(null); setSource(label);
     try {
-      if (!(await ensureModel())) return;
+      if (status !== "ready") {
+        setStatus("loading");
+        await loadModel((m) => setMsg(m));
+        setStatus("ready");
+      }
       const meta = getMeta();
-      const size = meta?.input_size ?? 224;
-      const imgData = await fileToImageData(src);
-
-      // Run the SAME pipeline the training code used, in TypeScript.
+      const size = meta?.input_size ?? 160;
+      const imgData = await toImageData(src);
       const pre = preprocess(imgData, size, 0.04, meta?.mean ?? 0.449, meta?.std ?? 0.226);
       const p = await predict(pre.tensor, size);
 
-      lastGray.current = pre.gray;
+      grayRef.current = pre.gray;
       setResult(p);
       setActive(sample);
-      draw(pre.gray, p, showCam);
+      draw(pre.gray, p, overlay);
 
-      // Self-check: for gallery samples we know what PyTorch produced on the
-      // server for this exact file. If the browser disagrees, the TypeScript
-      // preprocessing has drifted from the Python and the demo is not honest.
       if (sample) {
-        const maxDiff = Math.max(...p.probs.map((v, i) => Math.abs(v - sample.pytorch_probs[i])));
-        setParity({ maxDiff, agree: p.pred === sample.pytorch_pred });
+        const diff = Math.max(...p.probs.map((v, i) => Math.abs(v - sample.pytorch_probs[i])));
+        setCheck({ diff, agree: p.pred === sample.pytorch_pred });
       }
     } catch (e) {
       setStatus("error");
-      setStatusMsg(e instanceof Error ? e.message : String(e));
+      setMsg(e instanceof Error ? e.message : String(e));
     } finally {
       setBusy(false);
     }
-  }, [draw, ensureModel, showCam]);
+  }, [draw, overlay, status]);
 
   useEffect(() => {
-    if (lastGray.current) draw(lastGray.current, result, showCam);
-  }, [showCam, result, draw]);
+    if (grayRef.current) draw(grayRef.current, result, overlay);
+  }, [overlay, result, draw]);
 
-  const onUpload = (f: File | undefined) => {
+  const onFiles = (files: FileList | null) => {
+    const f = files?.[0];
     if (!f) return;
-    setUploadName(f.name);
-    run(f, null);
+    if (!f.type.startsWith("image/")) {
+      setStatus("error");
+      setMsg("Please choose an image file. The scans in this dataset are JPGs.");
+      return;
+    }
+    run(f, null, f.name);
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
-      {/* ---------- left: image + controls ---------- */}
-      <div className="space-y-3">
-        <div className="card overflow-hidden">
-          <div className="aspect-square bg-black/50 flex items-center justify-center">
-            {result ? (
-              <canvas ref={canvasRef} className="h-full w-full object-contain [image-rendering:auto]" />
-            ) : (
-              <div className="p-8 text-center text-sm text-muted">
-                Pick a held-out scan below, or upload one.
-                <canvas ref={canvasRef} className="hidden" />
-              </div>
-            )}
-          </div>
+    <div className="grid gap-8 lg:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
+      {/* ---------------- left: input and picture ---------------- */}
+      <div className="space-y-4">
+        <div
+          onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={(e) => { e.preventDefault(); setDragging(false); onFiles(e.dataTransfer.files); }}
+          className={`fig relative aspect-square overflow-hidden transition-colors ${
+            dragging ? "border-steel bg-steel/5" : ""
+          }`}
+        >
+          {result ? (
+            <canvas
+              ref={canvasRef}
+              className="h-full w-full object-contain"
+              aria-label="The scan after processing, with the model's attention drawn over it"
+            />
+          ) : (
+            <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">
+              <canvas ref={canvasRef} className="hidden" />
+              <p className="text-[0.9375rem] text-body">
+                Drop a brain scan here, or pick one below.
+              </p>
+              <p className="text-[0.8125rem] text-muted">
+                It is read on your own machine. Nothing is uploaded.
+              </p>
+            </div>
+          )}
+
+          {busy && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/80">
+              <p className="text-[0.875rem] text-body">
+                {status === "loading" ? `Getting the model ready (${msg})` : "Working"}
+              </p>
+            </div>
+          )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <label className="cursor-pointer rounded-lg border border-line bg-panel px-3 py-2 text-xs hover:border-accent/60">
-            Upload an MRI slice
-            <input type="file" accept="image/*" className="hidden"
-              onChange={(e) => onUpload(e.target.files?.[0])} />
-          </label>
+        <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => setShowCam((v) => !v)}
-            disabled={!result}
-            className="rounded-lg border border-line bg-panel px-3 py-2 text-xs disabled:opacity-40 hover:border-accent/60"
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="rounded border border-rule bg-white px-3 py-2 text-[0.875rem] hover:border-steel"
           >
-            {showCam ? "Hide attention" : "Show attention"}
+            Choose a file
           </button>
+          <input
+            ref={fileRef} type="file" accept="image/*" className="sr-only"
+            onChange={(e) => onFiles(e.target.files)}
+          />
+          {result && (
+            <label className="flex flex-1 items-center gap-3 rounded border border-rule bg-white px-3 py-2">
+              <span className="whitespace-nowrap text-[0.8125rem] text-muted">Attention</span>
+              <input
+                type="range" min={0} max={1} step={0.05} value={overlay}
+                onChange={(e) => setOverlay(Number(e.target.value))}
+                aria-label="How strongly to draw the attention map over the scan"
+                className="w-full accent-[#1D5B8F]"
+              />
+            </label>
+          )}
         </div>
 
-        {uploadName && (
-          <p className="text-[11px] text-muted">
-            Loaded <span className="mono">{uploadName}</span> — processed locally, never uploaded.
+        {source && (
+          <p className="p-small">
+            Showing <span className="font-mono text-[0.8125rem]">{source}</span>
           </p>
         )}
       </div>
 
-      {/* ---------- right: prediction ---------- */}
-      <div className="space-y-4">
-        {status === "loading" && (
-          <Note>Loading model — {statusMsg}…</Note>
-        )}
+      {/* ---------------- right: what the model said ---------------- */}
+      <div className="space-y-5">
         {status === "error" && (
-          <Note tone="warn">
-            In-browser inference failed: <span className="mono">{statusMsg}</span>. The precomputed
-            predictions in the gallery below still show what the model does.
-          </Note>
+          <Callout tone="warn" title="That did not work">
+            {msg}. The examples below still show what the model does, because those
+            answers were worked out ahead of time.
+          </Callout>
         )}
 
-        {result && (
-          <div className="card p-5 space-y-4">
-            <div className="flex items-baseline justify-between gap-3 flex-wrap">
+        {result ? (
+          <div className="fig p-5">
+            <div className="flex flex-wrap items-end justify-between gap-4 border-b border-rule pb-4">
               <div>
-                <p className="text-xs uppercase tracking-wider text-muted">Predicted stage</p>
-                <p className="text-2xl font-semibold" style={{ color: TONE[result.pred] }}>
-                  {SHORT[result.pred]}
+                <p className="p-small">The model says</p>
+                <p className="font-serif text-[1.75rem] font-semibold leading-tight"
+                   style={{ color: STAGE[result.pred] }}>
+                  {FULL[result.pred]}
                 </p>
               </div>
               {active && (
                 <div className="text-right">
-                  <p className="text-xs uppercase tracking-wider text-muted">Clinical label</p>
-                  <p className="text-sm text-slate-300">{active.true_name}</p>
+                  <p className="p-small">Clinician&apos;s label</p>
+                  <p className="text-[0.9375rem] text-body">{FULL[active.true_label]}</p>
                 </div>
               )}
             </div>
 
-            <div className="space-y-2">
+            <ul className="mt-4 space-y-2.5">
               {result.probs.map((p, i) => (
-                <div key={i}>
-                  <div className="flex justify-between text-xs">
-                    <span className={i === result.pred ? "text-white" : "text-muted"}>{SHORT[i]}</span>
-                    <span className="tabular-nums text-muted">{(p * 100).toFixed(1)}%</span>
+                <li key={i}>
+                  <div className="flex justify-between text-[0.8125rem]">
+                    <span className={i === result.pred ? "text-ink" : "text-muted"}>{SHORT[i]}</span>
+                    <span className="tnum text-muted">{(p * 100).toFixed(1)}%</span>
                   </div>
-                  <div className="h-2 rounded-full bg-line/60">
-                    <div className="h-2 rounded-full transition-all"
-                      style={{ width: `${p * 100}%`, background: TONE[i] }} />
+                  <div className="mt-1 h-1.5 w-full bg-rule/70">
+                    <div className="h-1.5 transition-all"
+                         style={{ width: `${Math.max(p * 100, 0.6)}%`, background: STAGE[i] }} />
                   </div>
-                </div>
+                </li>
               ))}
-            </div>
+            </ul>
 
-            <p className="text-[11px] text-muted">
-              {result.ms.toFixed(0)} ms in your browser (WASM, single-threaded).
-              {" "}Warm colours mark the regions the classifier weighted most.
+            <p className="mt-4 p-small">
+              Worked out in {result.ms.toFixed(0)} milliseconds on your machine. Warm colours on
+              the picture show the parts of the slice that pushed hardest towards the answer above.
             </p>
 
-            {parity && (
-              <Note tone={parity.agree && parity.maxDiff < 0.02 ? "good" : "warn"}>
-                <strong>Pipeline self-check:</strong>{" "}
-                {parity.agree
-                  ? `browser matches the PyTorch prediction for this file (max probability difference ${parity.maxDiff.toFixed(4)}).`
-                  : `browser DISAGREES with PyTorch on this file (max difference ${parity.maxDiff.toFixed(4)}). The TypeScript preprocessing has drifted from the Python.`}
-              </Note>
+            {check && (
+              <div className="mt-4">
+                <Callout tone={check.agree && check.diff < 0.02 ? "good" : "warn"}>
+                  {check.agree
+                    ? `Cross-check passed. Running this file in the browser gives the same answer as running it in Python, to within ${check.diff.toFixed(4)}.`
+                    : `Cross-check failed. The browser and Python disagree on this file by ${check.diff.toFixed(4)}, which means the two versions of the image handling have drifted apart.`}
+                </Callout>
+              </div>
             )}
+          </div>
+        ) : (
+          <div className="fig p-5">
+            <p className="p-body">
+              Pick one of the scans below. Each one belongs to a patient the model never
+              saw while it was learning, so these are honest tests rather than recall.
+            </p>
+            <p className="mt-3 p-small">
+              The model file is about 45 MB and is fetched the first time you run it.
+            </p>
           </div>
         )}
 
-        {/* ---------- gallery ---------- */}
-        <div className="card p-5">
-          <p className="mb-1 text-sm font-medium text-white">Held-out scans</p>
-          <p className="mb-4 text-xs text-muted">
-            Every subject below was excluded from training. Percentages are the model&apos;s
-            confidence in its own top choice, computed offline in PyTorch.
+        {/* gallery */}
+        <div className="fig p-5">
+          <p className="text-[0.9375rem] font-medium text-ink">Scans the model has never seen</p>
+          <p className="mt-1 p-small">
+            A tick means the model agreed with the clinician on that scan. A cross means it did not.
           </p>
           {samples.length === 0 ? (
-            <p className="text-xs text-muted">No samples exported yet.</p>
+            <p className="mt-4 p-small">No examples have been exported yet.</p>
           ) : (
-            <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
+            <ul className="mt-4 grid grid-cols-4 gap-2 sm:grid-cols-6">
               {samples.map((s) => {
                 const ok = s.pytorch_pred === s.true_label;
                 return (
-                  <button
-                    key={s.id}
-                    onClick={() => run(s.raw, s)}
-                    disabled={busy}
-                    title={`${s.subject} · slice ${s.slice} · true: ${s.true_name}`}
-                    className={`group relative overflow-hidden rounded-lg border transition ${
-                      active?.id === s.id ? "border-accent" : "border-line hover:border-accent/60"
-                    } disabled:opacity-50`}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={s.pre} alt={s.true_name} className="aspect-square w-full object-cover" />
-                    <span
-                      className="absolute left-1 top-1 rounded px-1 text-[9px] font-medium"
-                      style={{ background: TONE[s.true_label], color: "#0b1020" }}
+                  <li key={s.id}>
+                    <button
+                      type="button"
+                      onClick={() => run(s.raw, s, `${s.subject}, slice ${s.slice}`)}
+                      disabled={busy}
+                      className={`group relative block w-full overflow-hidden border transition ${
+                        active?.id === s.id ? "border-ink" : "border-rule hover:border-steel"
+                      } disabled:opacity-50`}
                     >
-                      {SHORT[s.true_label]}
-                    </span>
-                    <span className={`absolute right-1 top-1 text-[10px] ${ok ? "text-good" : "text-warn"}`}>
-                      {ok ? "✓" : "✗"}
-                    </span>
-                  </button>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={s.pre} alt={`Scan from patient ${s.subject}, labelled ${s.true_name}`}
+                           className="aspect-square w-full object-cover" />
+                      <span className="absolute left-0 top-0 px-1 py-0.5 text-[0.625rem] font-medium text-white"
+                            style={{ background: STAGE[s.true_label] }}>
+                        {SHORT[s.true_label]}
+                      </span>
+                      <span className="absolute right-0.5 top-0.5 text-[0.75rem] font-bold"
+                            style={{ color: ok ? "#2C6E4E" : "#A03027" }} aria-hidden="true">
+                        {ok ? "✓" : "✗"}
+                      </span>
+                      <span className="sr-only">{ok ? "model agreed" : "model disagreed"}</span>
+                    </button>
+                  </li>
                 );
               })}
-            </div>
+            </ul>
           )}
         </div>
       </div>

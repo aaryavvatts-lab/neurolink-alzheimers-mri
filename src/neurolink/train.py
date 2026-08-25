@@ -111,7 +111,7 @@ def main() -> None:
 
     print(f"\n{'=' * 72}\nRUN: {tag}\n{'=' * 72}")
     if leaking:
-        print("!! SPLIT MODE 'random_slice' -- subjects DO cross the train/test boundary.")
+        print("!! SPLIT MODE 'random_slice', subjects DO cross the train/test boundary.")
         print("!! This run is a deliberate demonstration of leakage. Its accuracy is NOT a")
         print("!! measure of diagnostic skill and must never be reported as one.")
         tr_s = set(mf.loc[tr_m, "subject"]); te_s = set(mf.loc[te_m, "subject"])
@@ -128,7 +128,7 @@ def main() -> None:
         print(f"slice stride {args.slice_stride}: training on every {args.slice_stride}th slice")
     if args.test_stride > 1:
         te_m = te_m & ((slice_idx % args.test_stride) == 0)
-        print(f"!! test stride {args.test_stride}: TEST SET SUBSAMPLED — smoke-test only, "
+        print(f"!! test stride {args.test_stride}: TEST SET SUBSAMPLED, smoke-test only, "
               f"NOT a reportable result")
     if args.val_stride > 1:
         # Validation runs after EVERY epoch and only picks the best checkpoint.
@@ -149,7 +149,7 @@ def main() -> None:
     te_ds = SliceDataset(indices=te_i, labels=labels[te_i], train=False, **ds_kw)
 
     # 77.8% of slices are Non-Demented. Without rebalancing, predicting "Non"
-    # for everything scores 0.78 accuracy and 0.25 balanced accuracy -- the
+    # for everything scores 0.78 accuracy and 0.25 balanced accuracy, the
     # classic way this project produces an impressive-looking useless model.
     counts = np.bincount(labels[tr_i], minlength=N_CLASSES).astype(float)
     inv = np.where(counts > 0, 1.0 / np.maximum(counts, 1), 0.0)
@@ -172,7 +172,7 @@ def main() -> None:
     # Class weighting on top of the sampler is a DOUBLE correction, and on this
     # dataset it is a strong one. The sampler already makes each class ~25% of
     # every batch; inverse-frequency weights then give Moderate Dementia 6x the
-    # gradient weight of every other class -- a class with exactly ONE training
+    # gradient weight of every other class, a class with exactly ONE training
     # subject, resampled about 5,000 times per epoch. That pushes the model to
     # memorise one person and over-predict the rarest, most severe stage.
     #

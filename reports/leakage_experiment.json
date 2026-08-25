@@ -1,0 +1,24 @@
+{
+  "model": "resnet18",
+  "epochs": 8,
+  "leaky_random_split": {
+    "accuracy": 0.9897416120323949,
+    "balanced_accuracy": 0.9890985013118891,
+    "macro_f1": 0.9888019062374648,
+    "subjects_in_both_train_and_test": 347
+  },
+  "honest_subject_split_slice_level": {
+    "accuracy": 0.7779566744730679,
+    "balanced_accuracy": 0.3371669420087262,
+    "macro_f1": 0.338701096734777
+  },
+  "honest_subject_split_subject_level": {
+    "accuracy": 0.8113207547169812,
+    "balanced_accuracy": 0.35486111111111107,
+    "macro_f1": 0.34978991596638653
+  },
+  "inflation": {
+    "accuracy_points": 21.2,
+    "balanced_accuracy_points": 65.2
+  }
+}

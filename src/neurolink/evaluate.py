@@ -14,11 +14,12 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from .constants import SHORT_NAMES
+from .constants import COLLAPSE_BINARY, SHORT_NAMES
 from . import jsonio
 from .metrics import (
-    abstention_curve, aggregate_to_subjects, classification_metrics,
-    expected_calibration_error,
+    abstention_curve, accuracy_by_slice_position, aggregate_to_subjects,
+    classification_metrics, collapse_probs, expected_calibration_error,
+    reliability_points, roc_points,
 )
 
 REPO = Path(__file__).resolve().parents[2]
@@ -57,6 +58,11 @@ def evaluate_run(run_dir: Path) -> dict:
     probs, y, subjects = d["probs"], d["y_true"], d["subjects"].astype(str)
     summary = json.loads((run_dir / "summary.json").read_text())
 
+    # Slice positions let us report how accuracy varies through the brain.
+    import pandas as pd
+    mf = pd.read_csv(REPO / "cache" / "manifest.csv")
+    slice_positions = mf["slice_idx"].to_numpy()[d["rows"]]
+
     T = 1.0
     val_p = run_dir / "val_predictions.npz"
     if val_p.exists():
@@ -86,6 +92,12 @@ def evaluate_run(run_dir: Path) -> dict:
             "ece_subject_calibrated": expected_calibration_error(SPc, SY),
         },
         "abstention_subject": abstention_curve(SPc, SY),
+        "roc_subject": roc_points(
+            np.isin(SY, [1, 2, 3]).astype(int), collapse_probs(SP, COLLAPSE_BINARY, 2)[:, 1]),
+        "roc_slice": roc_points(
+            np.isin(y, [1, 2, 3]).astype(int), collapse_probs(probs, COLLAPSE_BINARY, 2)[:, 1]),
+        "reliability_slice": reliability_points(probs_cal, y),
+        "accuracy_by_slice": accuracy_by_slice_position(probs, y, slice_positions),
         "subject_predictions": [
             {"subject": str(s), "true": int(t), "pred": int(p.argmax()),
              "probs": [round(float(v), 4) for v in p]}
@@ -100,7 +112,7 @@ def print_report(e: dict) -> None:
     sl, sb = e["slice_level"], e["subject_level"]
     print(f"\n{'=' * 72}\n{e['tag']}   ({e['model']}, split={e['split_mode']})")
     if e["leaking_split"]:
-        print("  *** LEAKING SPLIT -- these numbers are an artefact, not a result ***")
+        print("  *** LEAKING SPLIT, these numbers are an artefact, not a result ***")
     print(f"{'=' * 72}")
     print(f"{'':22s}{'slice-level':>14s}{'SUBJECT-level':>16s}")
     for name, key in [("accuracy", "accuracy"), ("balanced accuracy", "balanced_accuracy"),
@@ -124,7 +136,7 @@ def print_report(e: dict) -> None:
         print(f"  {n:>9s} " + "".join(f"{v:>11d}" for v in cm[i]))
     for i, pc in enumerate(sb["per_class"]):
         if pc["support"] and pc["support"] <= 3:
-            print(f"  NOTE: '{SHORT_NAMES[i]}' has only {pc['support']} test subject(s) — "
+            print(f"  NOTE: '{SHORT_NAMES[i]}' has only {pc['support']} test subject(s), "
                   f"its per-class numbers are anecdotal, not an estimate.")
 
 

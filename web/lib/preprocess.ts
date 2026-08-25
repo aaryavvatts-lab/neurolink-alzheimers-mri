@@ -58,7 +58,7 @@ export function resize(src: Gray, nw: number, nh: number): Gray {
 }
 
 /**
- * Area-averaging downsample — the equivalent of OpenCV's INTER_AREA.
+ * Area-averaging downsample, the equivalent of OpenCV's INTER_AREA.
  *
  * Python downscales with INTER_AREA, which averages every input pixel falling
  * inside an output pixel's footprint. Bilinear instead samples two points and
@@ -111,7 +111,7 @@ function cubicWeights(t: number): [number, number, number, number] {
   return [w0, w1, w2, w3];
 }
 
-/** Bicubic resample — OpenCV's INTER_CUBIC, used for the un-squash step. */
+/** Bicubic resample, OpenCV's INTER_CUBIC, used for the un-squash step. */
 export function resizeCubic(src: Gray, nw: number, nh: number): Gray {
   const out = new Float32Array(nw * nh);
   const sx = src.w / nw;
@@ -179,7 +179,7 @@ export function percentile(vals: Float32Array, idx: Uint8Array | null, p: number
   return 255;
 }
 
-/** Separable max/min filters -- a square structuring element factorises. */
+/** Separable max/min filters, a square structuring element factorises. */
 function morph(mask: Uint8Array, w: number, h: number, r: number, dilate: boolean): Uint8Array {
   const pick = dilate ? Math.max : Math.min;
   const tmp = new Uint8Array(w * h);
@@ -211,7 +211,7 @@ function morph(mask: Uint8Array, w: number, h: number, r: number, dilate: boolea
  * Head mask: low absolute threshold against a zero background, morphological
  * close, largest connected component, holes filled.
  *
- * Deliberately NOT Otsu -- see the docstring in preprocess.py. Otsu picks a
+ * Deliberately NOT Otsu, see the docstring in preprocess.py. Otsu picks a
  * tissue-level threshold that fragments dim scans.
  */
 export function headMask(g: Gray): Uint8Array {

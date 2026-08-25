@@ -159,3 +159,60 @@ def iou_score(a: np.ndarray, b: np.ndarray) -> float:
     a, b = a.astype(bool), b.astype(bool)
     union = (a | b).sum()
     return float((a & b).sum() / union) if union else float("nan")
+
+
+def roc_points(y_true: np.ndarray, scores: np.ndarray, max_points: int = 120) -> list[dict]:
+    """ROC curve as a list of points, thinned so the website can plot it directly.
+
+    Stored rather than only summarised, because an AUC of 0.87 says nothing about
+    the shape of the trade-off, and the shape is what tells a reader whether the
+    model is usable at the operating point they care about.
+    """
+    from sklearn.metrics import roc_curve
+
+    if len(np.unique(y_true)) < 2:
+        return []
+    fpr, tpr, thr = roc_curve(y_true, scores)
+    if len(fpr) > max_points:
+        idx = np.unique(np.linspace(0, len(fpr) - 1, max_points).astype(int))
+        fpr, tpr, thr = fpr[idx], tpr[idx], thr[idx]
+    return [{"fpr": round(float(a), 4), "tpr": round(float(b), 4),
+             "threshold": round(float(c), 4) if np.isfinite(c) else None}
+            for a, b, c in zip(fpr, tpr, thr)]
+
+
+def reliability_points(probs: np.ndarray, y_true: np.ndarray, n_bins: int = 10) -> list[dict]:
+    """Confidence vs observed accuracy, binned. Empty bins are dropped."""
+    conf, pred = probs.max(1), probs.argmax(1)
+    correct = (pred == y_true).astype(float)
+    edges = np.linspace(0, 1, n_bins + 1)
+    out = []
+    for lo, hi in zip(edges[:-1], edges[1:]):
+        m = (conf > lo) & (conf <= hi)
+        if m.sum() >= 3:
+            out.append({"confidence": round(float(conf[m].mean()), 4),
+                        "accuracy": round(float(correct[m].mean()), 4),
+                        "n": int(m.sum())})
+    return out
+
+
+def accuracy_by_slice_position(
+    probs: np.ndarray, y_true: np.ndarray, slice_idx: np.ndarray
+) -> list[dict]:
+    """How performance varies with where in the brain the slice was taken.
+
+    Slices 100-160 run from near the skull base up through the ventricles. If
+    the model is reading ventricular anatomy, mid-range slices should carry more
+    signal than the lowest ones, and that is checkable rather than assumed.
+    """
+    pred = probs.argmax(1)
+    out = []
+    for s in np.unique(slice_idx):
+        m = slice_idx == s
+        if m.sum() < 20:
+            continue
+        out.append({"slice": int(s), "n": int(m.sum()),
+                    "accuracy": round(float((pred[m] == y_true[m]).mean()), 4),
+                    "balanced_accuracy": round(float(balanced_accuracy_score(
+                        y_true[m], pred[m])), 4) if len(np.unique(y_true[m])) > 1 else None})
+    return out

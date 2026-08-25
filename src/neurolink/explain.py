@@ -6,7 +6,7 @@ metrics.py). But there IS a real spatial question worth asking with them:
     Does the model look at the ventricles?
 
 Ventricular enlargement from surrounding tissue loss is the classic structural
-signature of Alzheimer's on MRI -- visible even in our own preprocessing probe,
+signature of Alzheimer's on MRI, visible even in our own preprocessing probe,
 where the Mild-Dementia subjects show markedly wider ventricles than the
 Non-Demented ones. So we:
 
@@ -14,7 +14,7 @@ Non-Demented ones. So we:
   2. Threshold the model's class activation map to a binary "where it looked" region.
   3. Compute genuine Dice and IoU between the two.
 
-Crucially we also compute the same overlap for two null controls -- a centred
+Crucially we also compute the same overlap for two null controls, a centred
 blob and the CAM from an untrained network. Without those, a Dice of 0.4 is an
 uninterpretable number: it could just mean "both regions are near the middle of
 the image". The controls turn it into evidence.
@@ -50,7 +50,7 @@ def ventricle_mask(img: np.ndarray, head: np.ndarray, central_frac: float = 0.45
     good enough to quote as a volumetric measurement.
 
     Two details matter. Closing BEFORE component analysis keeps the lateral
-    ventricles as one connected body -- an earlier version opened with a 3x3
+    ventricles as one connected body, an earlier version opened with a 3x3
     kernel first and shattered them into specks that no attention map could
     plausibly match. And components are kept by how central they are, because
     sulcal CSF is dark too but hugs the outer cortex, whereas the ventricles sit
@@ -126,7 +126,7 @@ def centred_blob(size: int, area_frac: float) -> np.ndarray:
     """Null control: a centred disc of the same area as the CAM region.
 
     If the CAM's Dice against ventricles is no better than this, the model's
-    'attention' carries no anatomical information -- it is just looking
+    'attention' carries no anatomical information, it is just looking
     middle-ish, like everything else in a centred brain image.
     """
     r = int(np.sqrt(area_frac * size * size / np.pi))
@@ -211,9 +211,9 @@ def run(ckpt: Path, n_samples: int, size: int, top_frac: float, out_json: Path) 
                summary["control_untrained_cnn"]["dice"],
                summary["control_centred_blob"]["dice"])
     summary["verdict"] = (
-        "Trained CAM overlaps ventricles more than both controls -- the model's attention "
+        "Trained CAM overlaps ventricles more than both controls, the model's attention "
         "is anatomically informed." if t > u and t > b else
-        "Trained CAM does NOT beat the controls -- its apparent focus on the ventricles is "
+        "Trained CAM does NOT beat the controls, its apparent focus on the ventricles is "
         "explained by centre bias, not learned anatomy."
     )
     out_json.parent.mkdir(parents=True, exist_ok=True)
@@ -225,7 +225,7 @@ def run(ckpt: Path, n_samples: int, size: int, top_frac: float, out_json: Path) 
 def render_figure(ckpt: Path, size: int, out_png: Path, seed: int = 0) -> None:
     """One row per stage: slice, ventricle mask, area-matched CAM, and overlap.
 
-    This is the figure that makes the Dice number interpretable -- it shows both
+    This is the figure that makes the Dice number interpretable, it shows both
     that the ventricle mask is a real anatomical structure and that the attention
     region it is compared against has the same area.
     """
@@ -271,9 +271,9 @@ def render_figure(ckpt: Path, size: int, out_png: Path, seed: int = 0) -> None:
         ov[..., 1] = vent
         panels = [
             (img, f"{mf.class_name.iloc[row]}", "gray"),
-            (vent, f"ventricle mask — {area * 100:.1f}% of frame", "gray"),
+            (vent, f"ventricle mask, {area * 100:.1f}% of frame", "gray"),
             (cb, f"attention, top {area * 100:.1f}% (area-matched)", "gray"),
-            (ov, f"overlap — Dice {dice_score(cb, vent):.2f}", None),
+            (ov, f"overlap, Dice {dice_score(cb, vent):.2f}", None),
         ]
         for c, (im, t, cm) in enumerate(panels):
             ax[r, c].imshow(im, cmap=cm)

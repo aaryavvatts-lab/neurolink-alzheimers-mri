@@ -1,21 +1,27 @@
 import type { Config } from "tailwindcss";
+
 export default {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        ink: "#0b1020",
-        panel: "#111834",
-        line: "#1f2a4d",
-        accent: "#5b8cff",
-        warn: "#ff5c5c",
-        good: "#3ddc97",
-        muted: "#8b96b8",
+        paper: "#FBFAF7",
+        card: "#FFFFFF",
+        ink: "#17181B",
+        body: "#33363D",
+        muted: "#666C77",
+        rule: "#E1DED5",
+        steel: "#1D5B8F",
+        brick: "#A03027",
+        forest: "#2C6E4E",
+        amber: "#9C6F13",
       },
       fontFamily: {
-        sans: ["ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "sans-serif"],
-        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
+        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
+      maxWidth: { prose: "37rem", wide: "62rem" },
     },
   },
   plugins: [],

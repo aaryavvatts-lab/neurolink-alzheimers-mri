@@ -23,6 +23,10 @@ export interface RunBlock {
   slice_level: Metrics; subject_level: Metrics;
   calibration: { temperature: number; ece_slice_uncalibrated: number; ece_slice_calibrated: number; ece_subject_calibrated: number };
   abstention_subject: { coverage: number; accuracy: number; balanced_accuracy: number | null; min_confidence: number }[];
+  roc_subject?: { fpr: number; tpr: number; threshold: number | null }[];
+  roc_slice?: { fpr: number; tpr: number; threshold: number | null }[];
+  reliability_slice?: { confidence: number; accuracy: number; n: number }[];
+  accuracy_by_slice?: { slice: number; n: number; accuracy: number; balanced_accuracy: number | null }[];
   subject_predictions: { subject: string; true: number; pred: number; probs: number[] }[];
 }
 export interface Results {
@@ -45,7 +49,10 @@ export interface Results {
     chance_level: number; verdict: string;
   };
   cam_ventricle_overlap?: {
-    n_slices: number; cam_top_frac: number;
+    n_slices: number;
+    region_area?: string;
+    mean_ventricle_area_frac?: number;
+    cam_resolution_note?: string;
     trained_model: { dice: number; iou: number };
     control_untrained_cnn: { dice: number; iou: number };
     control_centred_blob: { dice: number; iou: number };
@@ -62,7 +69,7 @@ export interface Results {
 }
 /** Format a metric that may be unmeasurable. */
 export function fmt(v: number | null | undefined, digits = 3): string {
-  return v === null || v === undefined || Number.isNaN(v) ? "—" : v.toFixed(digits);
+  return v === null || v === undefined || Number.isNaN(v) ? "n/a" : v.toFixed(digits);
 }
 
 export const SHORT = ["Non", "Very mild", "Mild", "Moderate"];

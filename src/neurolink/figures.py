@@ -49,7 +49,7 @@ def leakage_bar(comparison: dict, out: Path) -> None:
     ax.text(len(labels) - 0.5, 0.262, "chance (balanced)", ha="right", fontsize=8, color=MUTED)
     ax.set_xticks(x); ax.set_xticklabels(labels, fontsize=9)
     ax.set_ylim(0, 1.08); ax.set_ylabel("Score")
-    ax.set_title("Identical model, identical epochs — only the split differs", fontsize=11.5)
+    ax.set_title("Identical model, identical epochs, only the split differs", fontsize=11.5)
     ax.legend(frameon=False, loc="upper right", fontsize=9)
     fig.tight_layout(); fig.savefig(out, dpi=150, bbox_inches="tight"); plt.close(fig)
 
@@ -77,7 +77,7 @@ def abstention(curve: list[dict], out: Path) -> None:
     acc = [c["accuracy"] for c in curve]
     fig, ax = plt.subplots(figsize=(6.4, 4.2))
     ax.plot(cov, acc, "-o", color=ACCENT, ms=4)
-    ax.set_xlabel("Coverage — fraction of patients the model rules on")
+    ax.set_xlabel("Coverage, fraction of patients the model rules on")
     ax.set_ylabel("Accuracy on those it rules on")
     ax.set_title("Deferring the least-confident cases to a clinician", fontsize=11)
     ax.grid(alpha=0.25)
@@ -103,7 +103,7 @@ def reliability(probs: np.ndarray, y: np.ndarray, out: Path, n_bins: int = 12) -
 
 
 def dataset_overview(manifest, out: Path) -> None:
-    """Images vs people — the chart that explains why this project is hard."""
+    """Images vs people, the chart that explains why this project is hard."""
     g = manifest.groupby("class_name").agg(images=("path", "size"),
                                            subjects=("subject", "nunique"),
                                            cdr=("cdr", "first")).sort_values("cdr")

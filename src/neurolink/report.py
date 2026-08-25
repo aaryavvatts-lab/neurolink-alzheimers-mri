@@ -72,9 +72,9 @@ def main() -> None:
                               "abstention_subject", "subject_predictions")
         }
         figures.confusion(np.array(e["subject_level"]["confusion_matrix"]),
-                          f"{rd.name} — subject level", figures.FIG / f"cm_subject_{rd.name}.png")
+                          f"{rd.name}, subject level", figures.FIG / f"cm_subject_{rd.name}.png")
         figures.confusion(np.array(e["slice_level"]["confusion_matrix"]),
-                          f"{rd.name} — slice level", figures.FIG / f"cm_slice_{rd.name}.png")
+                          f"{rd.name}, slice level", figures.FIG / f"cm_slice_{rd.name}.png")
 
     # ---- leakage experiment ----
     lk = load_json(REPO / "reports" / "leakage_experiment.json")
