@@ -154,7 +154,7 @@ export function buildReport(
       76
     ),
     "",
-    "Full method and results: https://slicewise-mri.vercel.app",
+    "Full method and results: https://alzheimers-mri-classifier.vercel.app",
   ];
   return lines.join("\n");
 }
