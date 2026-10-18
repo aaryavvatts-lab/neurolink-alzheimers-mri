@@ -52,7 +52,7 @@ export default function DatasetBars({ r }: { r: Results }) {
           );
         })}
       </svg>
-      <p className="mt-2 text-[0.8125rem] text-muted">
+      <p className="mt-2 text-small text-muted">
         {mode === "images"
           ? "Counted this way the dataset looks large and only a little lopsided."
           : "Counted this way, one of the four groups has two people in it."}

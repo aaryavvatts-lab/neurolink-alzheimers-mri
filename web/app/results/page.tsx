@@ -17,12 +17,12 @@ export default function ResultsPage() {
   return (
     <Page
       eyebrow="Results"
-      title="What it can do, and where it gives up"
-      lede="Every number here is measured on patients the model never trained on, and scored one answer per patient rather than one answer per picture."
+      title="What it can do"
+      lede="And where it gives up. Every number here is measured on patients the model never trained on, and scored one answer per patient rather than one answer per picture."
     >
       {r && run && (
         <>
-          <Section n="1" title="Headline numbers">
+          <Section title="Headline numbers">
             <div className="mb-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               <Stat value={fmt(run.subject_level.balanced_accuracy)}
                     label="Balanced accuracy across four stages"
@@ -49,7 +49,7 @@ export default function ResultsPage() {
             </div>
           </Section>
 
-          <Section n="2" title="Four ways of doing it, side by side">
+          <Section title="Four ways of doing it, side by side">
             <div className="mb-6 max-w-prose">
               <Prose>
                 <p>
@@ -90,7 +90,7 @@ export default function ResultsPage() {
             </div>
           </Section>
 
-          <Section n="3" title="Where the mistakes go">
+          <Section title="Where the mistakes go">
             <ConfusionMatrix
               slice={run.slice_level.confusion_matrix}
               subject={run.subject_level.confusion_matrix}
@@ -113,10 +113,10 @@ export default function ResultsPage() {
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
               {run.subject_level.per_class.map((pc, i) => (
-                <div key={i} className="border-t border-rule pt-3">
+                <div key={i} className="pt-3">
                   <div className="flex items-baseline justify-between">
-                    <span className="text-[0.9375rem] text-ink">{SHORT[i]}</span>
-                    <span className="tnum text-[0.875rem] text-muted">
+                    <span className="text-body text-ink">{SHORT[i]}</span>
+                    <span className="tnum text-body text-muted">
                       {pc.support ? `${Math.round(pc.recall * 100)}% found` : "none in test set"}
                     </span>
                   </div>
@@ -131,7 +131,7 @@ export default function ResultsPage() {
             </div>
           </Section>
 
-          <Section n="4" title="The question it can actually answer">
+          <Section title="The question it can actually answer">
             <RocCurve
               points={run.roc_subject ?? []}
               auc={run.subject_level.binary_screening.roc_auc}
@@ -149,7 +149,7 @@ export default function ResultsPage() {
                   For comparison, a careful published study using a much larger pool of scans
                   from two collections reached about 90 percent balanced accuracy on healthy
                   versus Alzheimer&apos;s, and only about 62 percent on a three-way split with
-                  mild cognitive impairment in the middle<sup className="font-mono text-[0.7rem]">
+                  mild cognitive impairment in the middle<sup className="text-small">
                   <Link href="/references#r6" className="text-steel no-underline">[6]</Link></sup>.
                   The three-way number is the one worth remembering. Even with far more data,
                   sorting the middle of the scale is hard.
@@ -158,7 +158,7 @@ export default function ResultsPage() {
             </div>
           </Section>
 
-          <Section n="5" title="Letting the model say it does not know">
+          <Section title="Letting the model say it does not know">
             <CoverageSlider
               points={run.abstention_subject.map((a) => ({
                 coverage: a.coverage, accuracy: a.accuracy, min_confidence: a.min_confidence,
@@ -183,7 +183,7 @@ export default function ResultsPage() {
           </Section>
 
           {run.accuracy_by_slice && run.accuracy_by_slice.length > 5 && (
-            <Section n="6" title="Not every slice is equally useful">
+            <Section title="Not every slice is equally useful">
               <SliceAccuracy points={run.accuracy_by_slice.map((p) => ({
                 slice: p.slice, accuracy: p.accuracy, n: p.n,
               }))} />
@@ -202,7 +202,7 @@ export default function ResultsPage() {
           )}
 
           {r.cam_ventricle_overlap && (
-            <Section n="7" title="Is it looking at the right thing?">
+            <Section title="Is it looking at the right thing?">
               <div className="max-w-prose">
                 <Prose>
                   <p>
@@ -261,7 +261,7 @@ export default function ResultsPage() {
           )}
 
           {r.shortcut_probe && (
-            <Section n="8" title="A closer look at the brain-removed check">
+            <Section title="A closer look at the brain-removed check">
               <div className="max-w-prose">
                 <Prose>
                   <p>
@@ -306,7 +306,7 @@ export default function ResultsPage() {
           )}
 
           {r.ventricle_baseline && (
-            <Section n="9" title="Does the network beat a ruler?">
+            <Section title="Does the network beat a ruler?">
               <div className="max-w-prose">
                 <Prose>
                   <p>
@@ -332,7 +332,7 @@ export default function ResultsPage() {
             </Section>
           )}
 
-          <Section n="10" title="What would have to change for this to be worth anything">
+          <Section title="What would have to change for this to be worth anything">
             <div className="grid gap-x-10 gap-y-6 md:grid-cols-2">
               {[
                 ["347 people is a small study.",
@@ -349,7 +349,7 @@ export default function ResultsPage() {
                  "About 78 percent of the pictures are from people with no dementia. Answering healthy every time scores 78 percent. That is why the balanced numbers lead this page."],
               ].map(([t, d]) => (
                 <div key={t}>
-                  <p className="font-serif text-[1.0625rem] text-ink">{t}</p>
+                  <p className="font-serif text-body text-ink">{t}</p>
                   <p className="mt-1.5 p-body">{d}</p>
                 </div>
               ))}

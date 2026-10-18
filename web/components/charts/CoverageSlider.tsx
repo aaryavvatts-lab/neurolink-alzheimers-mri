@@ -33,7 +33,7 @@ export default function CoverageSlider({ points, total }: { points: Pt[]; total:
             return (
               <g key={f}>
                 <line x1={PAD.l} x2={W - PAD.r} y1={Y(v)} y2={Y(v)} stroke={C.grid} />
-                <text x={PAD.l - 8} y={Y(v) + 4} textAnchor="end" fontSize={11} fill={C.muted}>
+                <text x={PAD.l - 8} y={Y(v) + 4} textAnchor="end" fontSize={13} fill={C.muted}>
                   {Math.round(v * 100)}
                 </text>
               </g>
@@ -47,7 +47,7 @@ export default function CoverageSlider({ points, total }: { points: Pt[]; total:
                 stroke={C.ink} strokeDasharray="3 3" />
           <circle cx={X(cur.coverage)} cy={Y(cur.accuracy)} r={5} fill={C.ink} stroke="#fff" strokeWidth={1.5} />
           {[0.25, 0.5, 0.75, 1].map((v) => (
-            <text key={v} x={X(v)} y={H - PAD.b + 16} textAnchor="middle" fontSize={11} fill={C.muted}>
+            <text key={v} x={X(v)} y={H - PAD.b + 16} textAnchor="middle" fontSize={13} fill={C.muted}>
               {v * 100}%
             </text>
           ))}
@@ -57,7 +57,7 @@ export default function CoverageSlider({ points, total }: { points: Pt[]; total:
         </svg>
 
         <label className="block">
-          <span className="mb-2 block text-[0.875rem] text-body">
+          <span className="mb-2 block text-body text-body">
             Model rules on{" "}
             <strong className="tnum font-medium text-ink">{pct(cur.coverage, 0)}</strong> of patients
             ({ruledOn} of {total})
@@ -67,24 +67,24 @@ export default function CoverageSlider({ points, total }: { points: Pt[]; total:
             onChange={(e) => setI(Number(e.target.value))}
             aria-label="How many patients the model rules on"
             aria-valuetext={`${pct(cur.coverage, 0)} coverage, ${pct(cur.accuracy, 0)} accuracy`}
-            className="w-full accent-[#1D5B8F]"
+            className="w-full accent-steel"
           />
         </label>
 
         <div className="grid gap-4 sm:grid-cols-3">
-          <div className="border-t-2 border-rule pt-2">
-            <p className="tnum font-serif text-[1.5rem] font-semibold text-ink">{pct(cur.accuracy, 1)}</p>
-            <p className="text-[0.8125rem] text-body">correct on the cases it keeps</p>
+          <div className="pt-2">
+            <p className="tnum font-serif text-lead font-semibold text-ink">{pct(cur.accuracy, 1)}</p>
+            <p className="text-small text-body">correct on the cases it keeps</p>
           </div>
-          <div className="border-t-2 border-rule pt-2">
-            <p className="tnum font-serif text-[1.5rem] font-semibold text-ink">{total - ruledOn}</p>
-            <p className="text-[0.8125rem] text-body">patients sent to a clinician instead</p>
+          <div className="pt-2">
+            <p className="tnum font-serif text-lead font-semibold text-ink">{total - ruledOn}</p>
+            <p className="text-small text-body">patients sent to a clinician instead</p>
           </div>
-          <div className="border-t-2 border-rule pt-2">
-            <p className="tnum font-serif text-[1.5rem] font-semibold text-ink">
+          <div className="pt-2">
+            <p className="tnum font-serif text-lead font-semibold text-ink">
               {cur.min_confidence.toFixed(2)}
             </p>
-            <p className="text-[0.8125rem] text-body">lowest confidence it still acts on</p>
+            <p className="text-small text-body">lowest confidence it still acts on</p>
           </div>
         </div>
       </div>

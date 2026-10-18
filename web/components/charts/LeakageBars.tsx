@@ -64,7 +64,7 @@ export default function LeakageBars({ r }: { r: Results }) {
           <g key={v}>
             <line x1={PAD.l} x2={W - PAD.r} y1={PAD.t + ih * (1 - v)} y2={PAD.t + ih * (1 - v)}
                   stroke={C.grid} />
-            <text x={PAD.l - 8} y={PAD.t + ih * (1 - v) + 4} textAnchor="end" fontSize={11} fill={C.muted}>
+            <text x={PAD.l - 8} y={PAD.t + ih * (1 - v) + 4} textAnchor="end" fontSize={13} fill={C.muted}>
               {v * 100}
             </text>
           </g>
@@ -74,7 +74,7 @@ export default function LeakageBars({ r }: { r: Results }) {
           <g>
             <line x1={PAD.l} x2={W - PAD.r} y1={PAD.t + ih * (1 - chance)} y2={PAD.t + ih * (1 - chance)}
                   stroke={C.muted} strokeDasharray="4 3" />
-            <text x={W - PAD.r} y={PAD.t + ih * (1 - chance) - 6} textAnchor="end" fontSize={11} fill={C.muted}>
+            <text x={W - PAD.r} y={PAD.t + ih * (1 - chance) - 6} textAnchor="end" fontSize={13} fill={C.muted}>
               guessing at random
             </text>
           </g>
@@ -92,10 +92,10 @@ export default function LeakageBars({ r }: { r: Results }) {
                     fontWeight={600} fill={C.ink} className="tnum">
                 {pct(b.value)}
               </text>
-              <text x={x + w / 2} y={PAD.t + ih + 18} textAnchor="middle" fontSize={12} fill={C.body}>
+              <text x={x + w / 2} y={PAD.t + ih + 18} textAnchor="middle" fontSize={13} fill={C.body}>
                 {b.label}
               </text>
-              <text x={x + w / 2} y={PAD.t + ih + 34} textAnchor="middle" fontSize={11} fill={C.muted}>
+              <text x={x + w / 2} y={PAD.t + ih + 34} textAnchor="middle" fontSize={13} fill={C.muted}>
                 {b.sub}
               </text>
             </g>

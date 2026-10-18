@@ -68,7 +68,7 @@ export default function ModelCompare({ r }: { r: Results }) {
           const v = val(row);
           return (
             <g key={row.label}>
-              <text x={PAD.l - 12} y={y + 15} textAnchor="end" fontSize={12} fill={C.ink}>
+              <text x={PAD.l - 12} y={y + 15} textAnchor="end" fontSize={13} fill={C.ink}>
                 {row.label}
               </text>
               <text x={PAD.l - 12} y={y + 29} textAnchor="end" fontSize={10.5} fill={C.muted}>

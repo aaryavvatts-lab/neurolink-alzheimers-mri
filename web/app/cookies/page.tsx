@@ -4,30 +4,31 @@ import { Bullets, Clause, LegalPage } from "@/components/Legal";
 
 export const metadata: Metadata = {
   title: "Cookies",
-  description: "This site sets no cookies and uses no browser storage. This page explains what that means and how to check it.",
+  description: "This site sets no cookies. The only thing it stores is the theme you pick. This page explains what that means and how to check it.",
 };
 
 export default function Cookies() {
   return (
     <LegalPage
       title="Cookies"
-      summary="This site does not set cookies. It does not use local storage or any other way of keeping data on your device. That is why you were not asked to accept anything."
+      summary="This site does not set cookies. The only thing it keeps on your device is the theme you pick, and only when you pick one. That is why you were not asked to accept anything."
     >
-      <Clause n={1} title="The short answer">
+      <Clause title="The short answer">
         <p>
-          No cookies are set by this site, first party or third party. Nothing is written to
-          your device, so nothing is read back on a later visit. Every page load starts from
-          scratch and the site cannot tell whether you have been here before.
+          No cookies are set by this site, first party or third party. The only thing written
+          to your device is one word, light or dark, if you press the theme control in the
+          header, so the next page keeps the theme you chose. It carries no identifier and the
+          site cannot tell whether you have been here before.
         </p>
       </Clause>
 
-      <Clause n={2} title="Why there is no consent banner">
+      <Clause title="Why there is no consent banner">
         <p>
           Rules such as the EU ePrivacy Directive and the UK Privacy and Electronic
           Communications Regulations require your permission before storing or reading
           information on your device, unless that storage is strictly needed to provide
-          something you asked for. Since this site stores nothing at all, there is no
-          permission to ask for.
+          something you asked for. The theme preference is exactly that, a setting you asked
+          for, and nothing else is stored, so there is no permission to ask for.
         </p>
         <p>
           Banners that appear on sites with nothing to consent to are noise, so I have not
@@ -35,7 +36,7 @@ export default function Cookies() {
         </p>
       </Clause>
 
-      <Clause n={3} title="What the site does store, briefly, while you use it">
+      <Clause title="What the site does store, briefly, while you use it">
         <p>
           When you run the demo, two things are held in your browser&apos;s memory for as long
           as the tab is open:
@@ -49,7 +50,7 @@ export default function Cookies() {
         </p>
       </Clause>
 
-      <Clause n={4} title="Third-party cookies">
+      <Clause title="Third-party cookies">
         <p>
           There are none, because there are no third parties. No analytics service, no
           advertising network, no embedded videos, no social buttons, no comment system, and
@@ -58,19 +59,19 @@ export default function Cookies() {
         </p>
       </Clause>
 
-      <Clause n={5} title="How to check for yourself">
+      <Clause title="How to check for yourself">
         <p>
           You do not have to take my word for it. In most browsers, press F12 to open the
           developer tools, then:
         </p>
         <Bullets items={[
           "Open the Application or Storage tab and look under Cookies. You should see nothing listed for this site.",
-          "Look under Local Storage and Session Storage for the same address. Both should be empty.",
+          "Look under Local Storage for the same address. It holds a single entry named theme if you have pressed the theme control, and nothing otherwise. Session Storage is empty.",
           "Open the Network tab and reload. Every request should point at this site's own domain.",
         ]} />
       </Clause>
 
-      <Clause n={6} title="If this changes">
+      <Clause title="If this changes">
         <p>
           If I ever add something that needs a cookie, this page will be updated first, a
           proper consent choice will be added, and the date at the top will change. See the{" "}

@@ -13,7 +13,7 @@ export default function Terms() {
       title="Terms of use"
       summary="By using this site you accept what follows. The most important part is the first clause, and it is not boilerplate: this is a student project and it must not be used to make any decision about anyone's health."
     >
-      <Clause n={1} title="This is not medical advice, and not a medical device">
+      <Clause title="This is not medical advice, and not a medical device">
         <p>
           SliceWise is a research demonstration built by a student. It has not been reviewed
           or approved by any medicines or medical device regulator, including the MHRA in the
@@ -32,7 +32,7 @@ export default function Terms() {
         </p>
       </Clause>
 
-      <Clause n={2} title="What the site is">
+      <Clause title="What the site is">
         <p>
           A written account of a machine learning experiment, some charts of its results, and
           a demonstration that runs a trained model inside your browser. It is provided free,
@@ -40,7 +40,7 @@ export default function Terms() {
         </p>
       </Clause>
 
-      <Clause n={3} title="What you may do">
+      <Clause title="What you may do">
         <Bullets items={[
           "Read the site, share links to it, and quote it with attribution.",
           "Run the demonstration on your own images.",
@@ -49,7 +49,7 @@ export default function Terms() {
         ]} />
       </Clause>
 
-      <Clause n={4} title="What you may not do">
+      <Clause title="What you may not do">
         <Bullets items={[
           "Present output from this model as a medical finding, a diagnosis, or a screening result, to anyone, in any setting.",
           "Use it in a clinical workflow, a triage process, an insurance decision, an employment decision, or anything else that affects a real person.",
@@ -59,7 +59,7 @@ export default function Terms() {
         ]} />
       </Clause>
 
-      <Clause n={5} title="Accuracy of what is written here">
+      <Clause title="Accuracy of what is written here">
         <p>
           I have tried to report the results honestly, including the parts that make the
           project look bad. The numbers on this site come from the code in the repository, run
@@ -74,7 +74,7 @@ export default function Terms() {
         </p>
       </Clause>
 
-      <Clause n={6} title="No warranty">
+      <Clause title="No warranty">
         <p>
           This site and the model are provided as they are, with no promises of any kind. I do
           not promise that the site will be available, that it will work in your browser, that
@@ -83,7 +83,7 @@ export default function Terms() {
         </p>
       </Clause>
 
-      <Clause n={7} title="Limits on liability">
+      <Clause title="Limits on liability">
         <p>
           To the fullest extent the law allows, I am not liable for any loss or harm arising
           from your use of this site or anything you did or did not do because of it. That
@@ -95,7 +95,7 @@ export default function Terms() {
         </p>
       </Clause>
 
-      <Clause n={8} title="Third-party data and code">
+      <Clause title="Third-party data and code">
         <p>
           The scans come from the OASIS collection, released by the Knight Alzheimer Disease
           Research Center at Washington University in St. Louis. Their terms govern the data
@@ -107,7 +107,7 @@ export default function Terms() {
         </p>
       </Clause>
 
-      <Clause n={9} title="Availability and changes">
+      <Clause title="Availability and changes">
         <p>
           This is a personal project on free hosting. It may be changed, moved or taken down
           at any time without notice. If these terms change, the date at the top of this page
@@ -115,7 +115,7 @@ export default function Terms() {
         </p>
       </Clause>
 
-      <Clause n={10} title="Contact">
+      <Clause title="Contact">
         <p>
           Questions, corrections and bug reports are welcome through the issue tracker on the
           project&apos;s public code repository. If you think something on this site is wrong,

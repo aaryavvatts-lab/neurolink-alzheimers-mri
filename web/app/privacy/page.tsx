@@ -13,7 +13,7 @@ export default function Privacy() {
       title="Privacy"
       summary="This site has no accounts, no sign-up, no adverts and no tracking. Any scan you open is read by your own browser and is never uploaded. What follows spells that out properly."
     >
-      <Clause n={1} title="Who runs this site">
+      <Clause title="Who runs this site">
         <p>
           SliceWise is a personal student research project. It is not a company, a clinic or a
           registered organisation, and it is not run on behalf of any university or hospital.
@@ -23,7 +23,7 @@ export default function Privacy() {
         </p>
       </Clause>
 
-      <Clause n={2} title="What the site collects directly">
+      <Clause title="What the site collects directly">
         <p>
           Nothing. There is no sign-up, no login, no contact form, no comment box, no
           newsletter and no payment. The site never asks you for your name, your email
@@ -31,7 +31,7 @@ export default function Privacy() {
         </p>
       </Clause>
 
-      <Clause n={3} title="What happens to a scan you open">
+      <Clause title="What happens to a scan you open">
         <p>
           The demo page lets you drop in an image or pick one of the examples. That image is
           read by your browser, processed by code running on your own computer, and passed to
@@ -50,16 +50,19 @@ export default function Privacy() {
         </p>
       </Clause>
 
-      <Clause n={4} title="Cookies and browser storage">
+      <Clause title="Cookies and browser storage">
         <p>
-          This site sets no cookies. It does not use local storage, session storage or any
-          other way of keeping information on your device between visits. There is no consent
-          banner because there is nothing to consent to. The{" "}
+          This site sets no cookies. The one thing it keeps on your device is the theme you
+          pick with the Light or Dark control in the header, stored in local storage under the
+          name theme so the next page matches, and only if you press that control. Nothing
+          else is written, nothing identifies you, and clearing your browser&apos;s site data
+          removes it. There is no consent banner because a preference you set yourself is not
+          something to consent to. The{" "}
           <Link href="/cookies" className="link">cookie page</Link> goes into more detail.
         </p>
       </Clause>
 
-      <Clause n={5} title="Analytics and tracking">
+      <Clause title="Analytics and tracking">
         <p>
           There are none. No analytics service, no page-view counter, no heat maps, no session
           recording, no advertising pixels, no social media buttons and no fingerprinting. No
@@ -71,7 +74,7 @@ export default function Privacy() {
         </p>
       </Clause>
 
-      <Clause n={6} title="What the host can see">
+      <Clause title="What the host can see">
         <p>
           The site is published on Vercel. Like any web host, Vercel&apos;s servers handle the
           request your browser makes in order to send the page back, and their systems keep
@@ -94,7 +97,7 @@ export default function Privacy() {
         </p>
       </Clause>
 
-      <Clause n={7} title="The medical scans used to build the model">
+      <Clause title="The medical scans used to build the model">
         <p>
           The model was trained on the OASIS collection, which is public research data. Those
           scans were collected with consent for research use and were already stripped of
@@ -108,14 +111,14 @@ export default function Privacy() {
         </p>
       </Clause>
 
-      <Clause n={8} title="Children">
+      <Clause title="Children">
         <p>
           This site is not aimed at children and does not knowingly collect anything from
           anyone, of any age, because it does not collect anything from anyone.
         </p>
       </Clause>
 
-      <Clause n={9} title="Your rights">
+      <Clause title="Your rights">
         <p>
           Rules such as the UK and EU General Data Protection Regulation give you rights over
           personal data held about you, including the right to see it, correct it or have it
@@ -128,7 +131,7 @@ export default function Privacy() {
         </p>
       </Clause>
 
-      <Clause n={10} title="Changes">
+      <Clause title="Changes">
         <p>
           If this ever changes, for example if I add a feature that needs to store something,
           I will update this page and change the date at the top before that feature goes

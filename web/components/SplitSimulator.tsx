@@ -102,28 +102,28 @@ export default function SplitSimulator({ r }: { r: Results }) {
       </Chart>
 
       <div className="grid gap-5 sm:grid-cols-3">
-        <div className="border-t-2 pt-3" style={{ borderColor: stats.split ? C.brick : C.forest }}>
-          <p className="tnum font-serif text-[1.75rem] font-semibold leading-none"
+        <div className="pt-3" style={{ borderColor: stats.split ? C.brick : C.forest }}>
+          <p className="tnum font-serif text-lead font-semibold leading-none"
              style={{ color: stats.split ? C.brick : C.forest }}>
             {stats.split} of {stats.total}
           </p>
-          <p className="mt-2 text-[0.8125rem] leading-snug text-body">
+          <p className="mt-2 text-small leading-snug text-body">
             patients with pictures in both piles
           </p>
         </div>
-        <div className="border-t-2 border-rule pt-3">
-          <p className="tnum font-serif text-[1.75rem] font-semibold leading-none text-ink">
+        <div className="pt-3">
+          <p className="tnum font-serif text-lead font-semibold leading-none text-ink">
             {(stats.frac * 100).toFixed(0)}%
           </p>
-          <p className="mt-2 text-[0.8125rem] leading-snug text-body">
+          <p className="mt-2 text-small leading-snug text-body">
             of patients the model can memorise and then be tested on
           </p>
         </div>
-        <div className="border-t-2 border-rule pt-3">
-          <p className="tnum font-serif text-[1.75rem] font-semibold leading-none text-ink">
+        <div className="pt-3">
+          <p className="tnum font-serif text-lead font-semibold leading-none text-ink">
             {nPatients * slicesEach}
           </p>
-          <p className="mt-2 text-[0.8125rem] leading-snug text-body">
+          <p className="mt-2 text-small leading-snug text-body">
             pictures, from {nPatients} people
           </p>
         </div>
@@ -137,17 +137,17 @@ export default function SplitSimulator({ r }: { r: Results }) {
             (v: number) => setTestFrac(v / 100), "%"],
         ] as const).map(([label, val, min, max, set, unit]) => (
           <label key={label} className="block">
-            <span className="mb-1.5 block text-[0.8125rem] text-body">
+            <span className="mb-1.5 block text-small text-body">
               {label}: <span className="tnum text-ink">{val}{unit}</span>
             </span>
             <input type="range" min={min} max={max} value={val}
                    onChange={(e) => (set as (n: number) => void)(Number(e.target.value))}
                    aria-label={label as string}
-                   className="w-full accent-[#1D5B8F]" />
+                   className="w-full accent-steel" />
           </label>
         ))}
         <button type="button" onClick={() => setSeed((s) => s + 1)}
-                className="self-end border border-rule bg-white px-3 py-2 text-[0.8125rem] hover:border-steel">
+                className="button button--quiet self-end">
           Shuffle again
         </button>
       </div>
@@ -169,9 +169,9 @@ export default function SplitSimulator({ r }: { r: Results }) {
           Every column is a single colour. A patient is either entirely in training or entirely
           in testing, so there is nothing to recognise at test time. The score drops, sometimes a
           lot, and what is left is a real measurement. In scikit-learn this is{" "}
-          <code className="font-mono text-[0.8125rem]">GroupKFold</code> or{" "}
-          <code className="font-mono text-[0.8125rem]">StratifiedGroupKFold</code>, with the
-          patient identifier passed as <code className="font-mono text-[0.8125rem]">groups</code>.
+          <code className="text-small">GroupKFold</code> or{" "}
+          <code className="text-small">StratifiedGroupKFold</code>, with the
+          patient identifier passed as <code className="text-small">groups</code>.
         </Callout>
       )}
     </div>

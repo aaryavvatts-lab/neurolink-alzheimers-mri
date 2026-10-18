@@ -17,11 +17,11 @@ export default function FindingsPage() {
   return (
     <Page
       eyebrow="Findings"
-      title="Three things this project showed, two of which I did not want"
-      lede="I set out to build an Alzheimer's classifier. What I ended up with is a set of measurements about how easy it is to fool yourself, which turned out to be the more useful result."
+      title="Three things this showed"
+      lede="Two of the three I did not want. I set out to build an Alzheimer's classifier. What I ended up with is a set of measurements about how easy it is to fool yourself, which turned out to be the more useful result."
     >
       {/* ---------------- 1 ---------------- */}
-      <Section n="01" id="leakage" title="Almost all of the accuracy came from how the data was split">
+      <Section id="leakage" title="Almost all of the accuracy came from how the data was split">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
           <Prose>
             <p>
@@ -79,7 +79,7 @@ export default function FindingsPage() {
       </Section>
 
       {/* ---------------- 2 ---------------- */}
-      <Section n="02" id="probe" title="Erasing the brain barely hurt the model">
+      <Section id="probe" title="Erasing the brain barely hurt the model">
         <div className="max-w-prose">
           <Prose>
             <p>
@@ -134,7 +134,7 @@ export default function FindingsPage() {
       </Section>
 
       {/* ---------------- 3 ---------------- */}
-      <Section n="03" id="pretraining" title="The small network beat the big pretrained one">
+      <Section id="pretraining" title="The small network beat the big pretrained one">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
           <Prose>
             <p>
@@ -173,7 +173,7 @@ export default function FindingsPage() {
       </Section>
 
       {/* ---------------- 4 ---------------- */}
-      <Section n="04" id="attention" title="And the attention maps do not survive a control either">
+      <Section id="attention" title="And the attention maps do not survive a control either">
         <div className="max-w-prose">
           <Prose>
             <p>
@@ -209,7 +209,7 @@ export default function FindingsPage() {
         </div>
       </Section>
 
-      <Section n="05" title="What I would tell someone starting this project">
+      <Section title="What I would tell someone starting this project">
         <div className="grid gap-x-10 gap-y-6 md:grid-cols-2">
           {[
             ["Count your people, not your files.",
@@ -226,7 +226,7 @@ export default function FindingsPage() {
              "The interesting result was the one that made the project look worse. That is usually where the actual finding is."],
           ].map(([t, d]) => (
             <div key={t}>
-              <p className="font-serif text-[1.0625rem] text-ink">{t}</p>
+              <p className="font-serif text-body text-ink">{t}</p>
               <p className="mt-1.5 p-body">{d}</p>
             </div>
           ))}

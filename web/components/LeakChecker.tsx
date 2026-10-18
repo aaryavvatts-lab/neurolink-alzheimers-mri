@@ -63,25 +63,25 @@ export default function LeakChecker() {
           options={[["all", "I have one list of files"], ["split", "I already have a split"]]}
         />
         <button type="button" onClick={() => { setText(EXAMPLE); setMode("all"); }}
-                className="text-[0.8125rem] text-steel underline underline-offset-2">
+                className="text-small text-steel underline underline-offset-2">
           Load an example
         </button>
       </div>
 
       {mode === "all" ? (
         <div>
-          <label htmlFor="filelist" className="mb-2 block text-[0.9375rem] text-ink">
+          <label htmlFor="filelist" className="mb-2 block text-body text-ink">
             Paste your file names, one per line
           </label>
           <textarea
             id="filelist" value={text} onChange={(e) => setText(e.target.value)}
             rows={9} spellCheck={false}
             placeholder={"patient_012_slice_04.png\npatient_012_slice_05.png\npatient_013_slice_04.png"}
-            className="w-full border border-rule bg-white p-3 font-mono text-[0.8125rem] leading-relaxed"
+            className="field text-small leading-relaxed"
           />
           <div className="mt-2 flex flex-wrap items-center gap-3">
             <button type="button" onClick={() => fileRef.current?.click()}
-                    className="border border-rule bg-white px-3 py-1.5 text-[0.8125rem] hover:border-steel">
+                    className="button button--quiet">
               Load a text or CSV file
             </button>
             <input ref={fileRef} type="file" accept=".txt,.csv,.tsv,text/*" className="sr-only"
@@ -94,10 +94,10 @@ export default function LeakChecker() {
           {([["Training files", trainText, setTrainText],
              ["Test files", testText, setTestText]] as const).map(([label, val, set]) => (
             <div key={label}>
-              <label className="mb-2 block text-[0.9375rem] text-ink">{label}</label>
+              <label className="mb-2 block text-body text-ink">{label}</label>
               <textarea
                 value={val} onChange={(e) => set(e.target.value)} rows={9} spellCheck={false}
-                className="w-full border border-rule bg-white p-3 font-mono text-[0.8125rem] leading-relaxed"
+                className="field text-small leading-relaxed"
               />
               <p className="mt-1 p-small">{parseList(val).length.toLocaleString()} lines</p>
             </div>
@@ -109,7 +109,7 @@ export default function LeakChecker() {
         <>
           {/* which key */}
           <div className="fig p-5">
-            <p className="text-[0.9375rem] font-medium text-ink">
+            <p className="text-body font-medium text-ink">
               What ties several files to the same thing?
             </p>
             <p className="mt-1 p-small">
@@ -148,7 +148,7 @@ export default function LeakChecker() {
                           <td className="pr-4">
                             {r.candidate.label}
                             {i === 0 && patternId === "auto" && (
-                              <span className="ml-2 text-[0.75rem] text-steel">best guess</span>
+                              <span className="ml-2 text-small text-steel">best guess</span>
                             )}
                           </td>
                           <td>{r.groups.toLocaleString()}</td>
@@ -166,7 +166,7 @@ export default function LeakChecker() {
           {/* verdict */}
           {chosen && sim && (
             <div className="fig p-5">
-              <p className="text-[0.9375rem] font-medium text-ink">What this means for your split</p>
+              <p className="text-body font-medium text-ink">What this means for your split</p>
 
               {split ? (
                 <div className="mt-4 space-y-4">
@@ -192,10 +192,10 @@ export default function LeakChecker() {
                       published work on this suggests the gap can be tens of points. Group your
                       split on the identifier instead of on the file.
                       <details className="mt-3">
-                        <summary className="cursor-pointer text-[0.8125rem] text-steel">
+                        <summary className="cursor-pointer text-small text-steel">
                           Show the first offending groups
                         </summary>
-                        <p className="mt-2 break-words font-mono text-[0.75rem] text-body">
+                        <p className="mt-2 break-words text-small text-body">
                           {split.sharedGroups.slice(0, 40).join(", ")}
                           {split.sharedGroups.length > 40 && ` and ${split.sharedGroups.length - 40} more`}
                         </p>
@@ -220,9 +220,9 @@ export default function LeakChecker() {
                       About {Math.round(sim.expectedSplitGroups)} of your {sim.groups} groups
                       would end up with some files in training and some in testing. Split on the
                       identifier instead. In scikit-learn that is{" "}
-                      <code className="font-mono text-[0.8125rem]">GroupKFold</code> or{" "}
-                      <code className="font-mono text-[0.8125rem]">StratifiedGroupKFold</code>,
-                      passing the identifier as <code className="font-mono text-[0.8125rem]">groups</code>.
+                      <code className="text-small">GroupKFold</code> or{" "}
+                      <code className="text-small">StratifiedGroupKFold</code>,
+                      passing the identifier as <code className="text-small">groups</code>.
                     </Callout>
                   ) : (
                     <Callout tone="good" title="A random split would probably be fine">
@@ -234,10 +234,10 @@ export default function LeakChecker() {
               )}
 
               <details className="mt-5">
-                <summary className="cursor-pointer text-[0.875rem] text-steel">
+                <summary className="cursor-pointer text-body text-steel">
                   Show me the code that fixes this
                 </summary>
-                <pre className="scroll-x mt-3 border border-rule bg-white p-4 font-mono text-[0.8125rem] leading-relaxed text-body">
+                <pre className="scroll-x mt-3 bg-card p-4 text-small leading-relaxed text-body">
 {`from sklearn.model_selection import StratifiedGroupKFold
 
 # groups holds one identifier per row, repeated for every file
@@ -261,10 +261,10 @@ assert not overlap, f"{len(overlap)} groups are in both piles"`}
 
 function Metric({ value, label, bad }: { value: string; label: string; bad?: boolean }) {
   return (
-    <div className="border-t-2 pt-3" style={{ borderColor: bad ? C.brick : C.rule }}>
-      <p className="tnum font-serif text-[1.75rem] font-semibold leading-none"
+    <div className="pt-3" style={{ borderColor: bad ? C.brick : C.rule }}>
+      <p className="tnum font-serif text-lead font-semibold leading-none"
          style={{ color: bad ? C.brick : C.ink }}>{value}</p>
-      <p className="mt-2 text-[0.8125rem] leading-snug text-body">{label}</p>
+      <p className="mt-2 text-small leading-snug text-body">{label}</p>
     </div>
   );
 }

@@ -7,14 +7,14 @@ export default function TryPage() {
   return (
     <Page
       eyebrow="Tool 01"
-      title="Run the model on a brain scan"
+      title="Run the model on a scan"
       lede="Drop in one scan or a whole folder of slices. Several images from the same scan are averaged into a single answer, which is how every number on this site is measured. You get the full breakdown, an honest read on how much to trust it, and a report you can keep. All of it runs on your own machine."
     >
-      <Section n="1" title="The demo">
+      <Section title="The demo">
         <Demo />
       </Section>
 
-      <Section n="2" title="What you are looking at">
+      <Section title="What you are looking at">
         <div className="grid gap-8 md:grid-cols-2">
           <Prose>
             <p>

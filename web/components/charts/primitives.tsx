@@ -2,20 +2,22 @@
 
 import React from "react";
 
+/* Chart colours are the page's own custom properties, so the SVGs follow the light and dark
+   palettes without redrawing. They resolve because the charts are inline SVG in the document. */
 export const C = {
-  ink: "#17181B",
-  body: "#33363D",
-  muted: "#666C77",
-  rule: "#E1DED5",
-  steel: "#1D5B8F",
-  brick: "#A03027",
-  forest: "#2C6E4E",
-  amber: "#9C6F13",
-  grid: "#EDEAE2",
+  ink: "var(--ink)",
+  body: "var(--ink)",
+  muted: "var(--muted)",
+  rule: "var(--rule)",
+  steel: "var(--data)",
+  brick: "var(--accent)",
+  forest: "var(--good)",
+  amber: "var(--warn)",
+  grid: "var(--rule)",
 };
 
 /** Colours for the four Clinical Dementia Rating stages, light to dark. */
-export const STAGE = ["#2C6E4E", "#7A8C2E", "#B4761A", "#A03027"];
+export const STAGE = ["var(--stage-0)", "var(--stage-1)", "var(--stage-2)", "var(--stage-3)"];
 
 export function useScale(domain: [number, number], range: [number, number]) {
   const [d0, d1] = domain;
@@ -36,7 +38,7 @@ export function AxisX({ x0, x1, y, ticks, fmt }: {
       {ticks.map((t) => (
         <g key={t.v}>
           <line x1={t.px} x2={t.px} y1={y} y2={y + 4} stroke={C.rule} />
-          <text x={t.px} y={y + 16} textAnchor="middle" fontSize={11} fill={C.muted}>
+          <text x={t.px} y={y + 16} textAnchor="middle" fontSize={13} fill={C.muted}>
             {fmt ? fmt(t.v) : t.v}
           </text>
         </g>
@@ -54,7 +56,7 @@ export function AxisY({ y0, y1, x, ticks, fmt }: {
       {ticks.map((t) => (
         <g key={t.v}>
           <line x1={x} x2={x + 6} y1={t.py} y2={t.py} stroke={C.rule} />
-          <text x={x - 6} y={t.py + 4} textAnchor="end" fontSize={11} fill={C.muted}>
+          <text x={x - 6} y={t.py + 4} textAnchor="end" fontSize={13} fill={C.muted}>
             {fmt ? fmt(t.v) : t.v}
           </text>
         </g>

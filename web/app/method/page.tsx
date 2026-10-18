@@ -21,10 +21,10 @@ export default function MethodPage() {
   return (
     <Page
       eyebrow="Method"
-      title="How it was built, and what went wrong along the way"
-      lede="The interesting parts of this project were all mistakes I nearly shipped. Three of them would never have thrown an error."
+      title="How it was built"
+      lede="And what went wrong along the way. The interesting parts of this project were all mistakes I nearly shipped. Three of them would never have thrown an error."
     >
-      <Section n="1" title="Getting the pictures ready">
+      <Section title="Getting the pictures ready">
         <div className="max-w-prose">
           <Prose>
             <p>
@@ -34,16 +34,11 @@ export default function MethodPage() {
           </Prose>
         </div>
 
-        <ol className="mt-8 max-w-prose space-y-6">
-          {STEPS.map(([t, d], i) => (
-            <li key={t} className="flex gap-4">
-              <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-rule font-mono text-[0.75rem] text-muted">
-                {i + 1}
-              </span>
-              <div>
-                <p className="font-serif text-[1.0625rem] text-ink">{t}</p>
-                <p className="mt-1 p-body">{d}</p>
-              </div>
+        <ol className="steps mt-8 max-w-prose list-decimal pl-6">
+          {STEPS.map(([t, d]) => (
+            <li key={t}>
+              <p className="t">{t}</p>
+              <p className="d p-body">{d}</p>
             </li>
           ))}
         </ol>
@@ -70,7 +65,7 @@ export default function MethodPage() {
         </div>
       </Section>
 
-      <Section n="2" title="Splitting the data, and a guard that shouts">
+      <Section title="Splitting the data, and a guard that shouts">
         <div className="max-w-prose">
           <Prose>
             <p>
@@ -85,7 +80,7 @@ export default function MethodPage() {
           </Prose>
         </div>
 
-        <pre className="scroll-x mt-6 max-w-prose border border-rule bg-white p-4 font-mono text-[0.8125rem] leading-relaxed text-body">
+        <pre className="scroll-x mt-6 max-w-prose bg-card p-4 text-small leading-relaxed text-body">
 {`overlap = set(train_subjects) & set(test_subjects)
 if overlap:
     raise ValueError(
@@ -107,7 +102,7 @@ if overlap:
         </div>
       </Section>
 
-      <Section n="3" title="The model">
+      <Section title="The model">
         <div className="max-w-prose">
           <Prose>
             <p>
@@ -142,7 +137,7 @@ if overlap:
         </div>
       </Section>
 
-      <Section n="4" title="Running the model in a browser">
+      <Section title="Running the model in a browser">
         <div className="max-w-prose">
           <Prose>
             <p>
@@ -174,7 +169,7 @@ if overlap:
         </div>
       </Section>
 
-      <Section n="5" title="How the scoring works">
+      <Section title="How the scoring works">
         <div className="max-w-prose">
           <Prose>
             <p>
@@ -199,7 +194,7 @@ if overlap:
         </div>
       </Section>
 
-      <Section n="6" title="Running it yourself">
+      <Section title="Running it yourself">
         <div className="max-w-prose">
           <Prose>
             <p>
@@ -209,7 +204,7 @@ if overlap:
             </p>
           </Prose>
         </div>
-        <pre className="scroll-x mt-6 max-w-prose border border-rule bg-white p-4 font-mono text-[0.8125rem] leading-relaxed text-body">
+        <pre className="scroll-x mt-6 max-w-prose bg-card p-4 text-small leading-relaxed text-body">
 {`uv venv --python 3.12 && uv sync
 ln -s /path/to/Data data
 

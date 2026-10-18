@@ -10,10 +10,10 @@ export default function DataPage() {
   return (
     <Page
       eyebrow="The data"
-      title="347 people, and why that is the whole story"
+      title="347 people, not 86,437 files"
       lede="Everything this project found comes back to one thing: the folder looks like a large dataset and is not one. It is worth being precise about what is actually in it."
     >
-      <Section n="1" title="Where these scans came from">
+      <Section title="Where these scans came from">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
           <Prose>
             <p>
@@ -42,7 +42,7 @@ export default function DataPage() {
         </div>
       </Section>
 
-      <Section n="2" title="Counted two ways">
+      <Section title="Counted two ways">
         <DatasetBars r={r} />
 
         <div className="mt-6 max-w-prose">
@@ -95,7 +95,7 @@ export default function DataPage() {
         </div>
       </Section>
 
-      <Section n="3" title="What the labels actually are">
+      <Section title="What the labels actually are">
         <div className="grid gap-8 md:grid-cols-2">
           <Prose>
             <p>
@@ -124,10 +124,10 @@ export default function DataPage() {
         </div>
       </Section>
 
-      <Section n="4" title="Two things the files hide">
+      <Section title="Two things the files hide">
         <div className="grid gap-8 md:grid-cols-2">
           <div>
-            <p className="font-serif text-[1.125rem] text-ink">
+            <p className="font-serif text-lead text-ink">
               They are stretched.
             </p>
             <div className="mt-2">
@@ -145,7 +145,7 @@ export default function DataPage() {
             </div>
           </div>
           <div>
-            <p className="font-serif text-[1.125rem] text-ink">
+            <p className="font-serif text-lead text-ink">
               They are a volume pretending to be pictures.
             </p>
             <div className="mt-2">
@@ -175,7 +175,7 @@ export default function DataPage() {
         </div>
       </Section>
 
-      <Section n="5" title="Getting it yourself">
+      <Section title="Getting it yourself">
         <div className="max-w-prose">
           <Prose>
             <p>

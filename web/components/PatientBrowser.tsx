@@ -41,11 +41,11 @@ export default function PatientBrowser({ r }: { r: Results }) {
           [`${nWrong}`, "it got wrong"],
           [`${Math.round(((rows.length - nWrong) / rows.length) * 100)}%`, "plain accuracy per patient"],
         ].map(([v, l], i) => (
-          <div key={l} className="border-t-2 pt-3"
+          <div key={l} className="pt-3"
                style={{ borderColor: i === 2 ? C.brick : C.rule }}>
-            <p className="tnum font-serif text-[1.5rem] font-semibold leading-none"
+            <p className="tnum font-serif text-lead font-semibold leading-none"
                style={{ color: i === 2 ? C.brick : C.ink }}>{v}</p>
-            <p className="mt-1.5 text-[0.8125rem] leading-snug text-body">{l}</p>
+            <p className="mt-1.5 text-small leading-snug text-body">{l}</p>
           </div>
         ))}
       </div>
@@ -59,12 +59,12 @@ export default function PatientBrowser({ r }: { r: Results }) {
       </div>
 
       <div className="fig scroll-x">
-        <table className="w-full min-w-[620px] text-[0.8125rem]">
+        <table className="w-full min-w-[620px] text-small">
           <caption className="sr-only">
             Every held-out patient, the clinician label, and what the model predicted
           </caption>
           <thead>
-            <tr className="border-b border-rule">
+            <tr>
               <th scope="col" className="px-4 py-2.5 text-left font-medium text-muted">Patient</th>
               <th scope="col" className="px-4 py-2.5 text-left font-medium text-muted">Clinician said</th>
               <th scope="col" className="px-4 py-2.5 text-left font-medium text-muted">Model said</th>
@@ -83,20 +83,20 @@ export default function PatientBrowser({ r }: { r: Results }) {
                   onClick={() => setOpen(isOpen ? null : p.subject)}
                   tabIndex={0}
                   onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(isOpen ? null : p.subject); } }}
-                  className={`cursor-pointer border-b border-rule/50 transition-colors hover:bg-paper ${isOpen ? "bg-paper" : ""}`}
+                  className={`cursor-pointer transition-colors hover:bg-paper ${isOpen ? "bg-paper" : ""}`}
                 >
-                  <td className="px-4 py-2.5 font-mono text-[0.75rem] text-body">{p.subject}</td>
+                  <td className="px-4 py-2.5 text-small text-body">{p.subject}</td>
                   <td className="px-4 py-2.5">
                     <span style={{ color: STAGE[p.true] }}>{SHORT[p.true]}</span>
                   </td>
                   <td className="px-4 py-2.5">
                     <span style={{ color: STAGE[p.pred] }}>{SHORT[p.pred]}</span>
-                    <span className="ml-2 text-[0.75rem]" style={{ color: ok ? C.forest : C.brick }}>
+                    <span className="ml-2 text-small" style={{ color: ok ? C.forest : C.brick }}>
                       {ok ? "correct" : "wrong"}
                     </span>
                   </td>
                   <td className="px-4 py-2.5">
-                    <div className="flex h-3 w-full min-w-[140px] overflow-hidden rounded-sm">
+                    <div className="flex h-3 w-full min-w-[140px] overflow-hidden">
                       {p.probs.map((v, i) => (
                         <div key={i} style={{ width: `${v * 100}%`, background: STAGE[i] }}
                              title={`${SHORT[i]}: ${(v * 100).toFixed(1)}%`} />
@@ -105,7 +105,7 @@ export default function PatientBrowser({ r }: { r: Results }) {
                     {isOpen && (
                       <ul className="mt-2 space-y-0.5">
                         {p.probs.map((v, i) => (
-                          <li key={i} className="flex justify-between text-[0.75rem] text-muted">
+                          <li key={i} className="flex justify-between text-small text-muted">
                             <span>{FULL[i]}</span>
                             <span className="tnum">{(v * 100).toFixed(1)}%</span>
                           </li>

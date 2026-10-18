@@ -30,7 +30,7 @@ export default function ConfusionMatrix({
       }
     >
       <div className="min-w-[440px]">
-        <table className="w-full border-collapse text-center text-[0.8125rem]">
+        <table className="w-full border-collapse text-center text-small">
           <caption className="sr-only">
             Confusion matrix, {level === "subject" ? "one row per patient" : "one row per slice"}
           </caption>
@@ -66,15 +66,15 @@ export default function ConfusionMatrix({
                         onFocus={() => setHover([i, j])}
                         onBlur={() => setHover(null)}
                         title={`${v} ${unit}${v === 1 ? "" : "s"} with label ${names[i]} predicted as ${names[j]}`}
-                        className="cursor-default rounded-sm px-2 py-2.5 transition-shadow"
+                        className="cursor-default px-2 py-2.5"
                         style={{
                           background: `rgba(${base.join(",")},${alpha})`,
                           color: frac > 0.55 ? "#fff" : C.ink,
                           boxShadow: on ? `inset 0 0 0 2px ${C.ink}` : "none",
                         }}
                       >
-                        <div className="tnum text-[0.9375rem] font-medium leading-none">{v}</div>
-                        <div className="tnum mt-1 text-[0.6875rem] opacity-80">
+                        <div className="tnum text-body font-medium leading-none">{v}</div>
+                        <div className="tnum mt-1 text-small opacity-80">
                           {rowSums[i] ? `${Math.round(frac * 100)}%` : "n/a"}
                         </div>
                       </div>
@@ -89,7 +89,7 @@ export default function ConfusionMatrix({
           </tbody>
         </table>
 
-        <p className="mt-3 text-[0.8125rem] text-muted">
+        <p className="mt-3 text-small text-muted">
           {hover
             ? `${cm[hover[0]][hover[1]]} ${unit}${cm[hover[0]][hover[1]] === 1 ? "" : "s"} labelled ${names[hover[0]]} were predicted as ${names[hover[1]]}.`
             : "Hover or tab through a cell to read it out."}

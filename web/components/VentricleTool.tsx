@@ -163,14 +163,14 @@ export default function VentricleTool() {
                   value={id}
                   onChange={(e) => setPick((p) =>
                     p ? (side === 0 ? [e.target.value, p[1]] : [p[0], e.target.value]) : p)}
-                  className="w-full border border-rule bg-white px-3 py-2 text-[0.875rem]"
+                  className="field"
                 >
                   {list.map((m) => (
                     <option key={m.id} value={m.id}>{m.subject}, {m.label_name}</option>
                   ))}
                 </select>
               </label>
-              <div className="border border-rule bg-black">
+              <div className="bg-black">
                 <canvas
                   ref={(el) => { refs.current[id] = el; }}
                   className="block w-full"
@@ -178,10 +178,10 @@ export default function VentricleTool() {
                 />
               </div>
               <div className="mt-2 flex items-baseline justify-between">
-                <span className="text-[0.8125rem]" style={{ color: STAGE[meta?.label ?? 0] }}>
+                <span className="text-small" style={{ color: STAGE[meta?.label ?? 0] }}>
                   {meta?.label_name}
                 </span>
-                <span className="tnum font-serif text-[1.25rem] font-semibold text-ink">
+                <span className="tnum font-serif text-lead font-semibold text-ink">
                   {st ? `${(st.ratio * 100).toFixed(1)}%` : "n/a"}
                 </span>
               </div>
@@ -193,31 +193,31 @@ export default function VentricleTool() {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="block">
-          <span className="mb-1.5 block text-[0.875rem] text-body">
+          <span className="mb-1.5 block text-body text-body">
             Height through the head, slice {slice + 1}
           </span>
           <input type="range" min={0} max={60} value={slice}
                  onChange={(e) => setSlice(Number(e.target.value))}
-                 className="w-full accent-[#1D5B8F]"
+                 className="w-full accent-steel"
                  aria-label="Height through the head" />
         </label>
         <label className="block">
-          <span className="mb-1.5 block text-[0.875rem] text-body">
+          <span className="mb-1.5 block text-body text-body">
             Anything darker than <span className="tnum text-ink">{cutoff}</span> counts as fluid
           </span>
           <input type="range" min={30} max={120} value={cutoff}
                  onChange={(e) => setCutoff(Number(e.target.value))}
-                 className="w-full accent-[#1D5B8F]"
+                 className="w-full accent-steel"
                  aria-label="Brightness cutoff below which a pixel counts as fluid" />
-          <span className="mt-1 block text-[0.75rem] text-muted">
+          <span className="mt-1 block text-small text-muted">
             Brightness runs 0 for black to 255 for white. The same cutoff is used on both
             panels, which is what makes the two numbers comparable.
           </span>
         </label>
       </div>
 
-      <div className="border-l-2 px-4 py-3" style={{ borderColor: C.steel }}>
-        <p className="text-[0.9375rem] leading-relaxed text-body">
+      <div className="px-4 py-3" style={{ borderColor: C.steel }}>
+        <p className="text-body leading-relaxed text-body">
           {Object.keys(stats).length === 2 && (() => {
             const [a, b] = pick.map((id) => stats[id]);
             if (!a || !b) return null;

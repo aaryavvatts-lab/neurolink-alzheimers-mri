@@ -75,12 +75,12 @@ export default function ReferencesPage() {
       title="Where the claims come from"
       lede="Everything cited here is a real paper I looked up and read the abstract of. Links go to the publisher."
     >
-      <Section n="1" title="Papers">
+      <Section title="Papers">
         <ol className="max-w-3xl space-y-7">
           {REFS.map((ref) => (
-            <li key={ref.n} id={`r${ref.n}`} className="scroll-mt-24 border-t border-rule pt-5">
+            <li key={ref.n} id={`r${ref.n}`} className="scroll-mt-24">
               <div className="flex gap-4">
-                <span className="font-mono text-[0.8125rem] text-muted">[{ref.n}]</span>
+                <span className="text-small text-muted">[{ref.n}]</span>
                 <div>
                   <p className="p-body">
                     {ref.authors} ({ref.year}).{" "}
@@ -97,7 +97,7 @@ export default function ReferencesPage() {
         </ol>
       </Section>
 
-      <Section n="2" title="Data and tools">
+      <Section title="Data and tools">
         <div className="max-w-prose">
           <Prose>
             <p>

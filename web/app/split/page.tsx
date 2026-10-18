@@ -8,14 +8,14 @@ export default function SplitPage() {
   return (
     <Page
       eyebrow="Tool 05"
-      title="Watch a bad split invent accuracy"
+      title="Watch a split invent accuracy"
       lede="This is the mistake at the centre of the project, drawn out square by square. Move the sliders and you can see exactly how a patient ends up on both sides of a train and test boundary."
     >
-      <Section n="1" title="The simulator">
+      <Section title="The simulator">
         <SplitSimulator r={r} />
       </Section>
 
-      <Section n="2" title="Why this matters more than it sounds">
+      <Section title="Why this matters more than it sounds">
         <div className="grid gap-8 md:grid-cols-2">
           <Prose>
             <p>

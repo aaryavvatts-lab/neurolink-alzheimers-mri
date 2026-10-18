@@ -8,10 +8,10 @@ export default function ExplorePage() {
   return (
     <Page
       eyebrow="Tool 02"
-      title="Look through a real brain, one cut at a time"
-      lede="Each scan in this dataset is 61 slices stacked up through the head. Stack them back together and you can cut through the brain in any direction, which is closer to how these scans are actually read."
+      title="Look through a real brain"
+      lede="One cut at a time. Each scan in this dataset is 61 slices stacked up through the head. Stack them back together and you can cut through the brain in any direction, which is closer to how these scans are actually read."
     >
-      <Section n="1" title="Three planes through one head">
+      <Section title="Three planes through one head">
         <div className="mb-8 max-w-prose">
           <Prose>
             <p>
@@ -40,7 +40,7 @@ export default function ExplorePage() {
         </div>
       </Section>
 
-      <Section n="2" title="What you are looking for">
+      <Section title="What you are looking for">
         <div className="grid gap-8 md:grid-cols-2">
           <Prose>
             <p>

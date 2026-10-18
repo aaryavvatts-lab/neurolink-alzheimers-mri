@@ -12,10 +12,10 @@ export default function VentriclesPage() {
   return (
     <Page
       eyebrow="Tool 03"
-      title="Measure the fluid spaces yourself"
+      title="Measure the fluid spaces"
       lede="Before reaching for a neural network it is worth seeing how far a ruler gets you. The classic sign of Alzheimer's on a scan is that the fluid chambers in the middle of the brain get wider as the tissue around them is lost."
     >
-      <Section n="1" title="The measuring tool">
+      <Section title="The measuring tool">
         <div className="mb-8 max-w-prose">
           <Prose>
             <p>
@@ -33,7 +33,7 @@ export default function VentriclesPage() {
         <VentricleTool />
       </Section>
 
-      <Section n="2" title="How well does the ruler actually do?">
+      <Section title="How well does the ruler actually do?">
         <div className="max-w-prose">
           <Prose>
             <p>
@@ -73,7 +73,7 @@ export default function VentriclesPage() {
         </p>
       </Section>
 
-      <Section n="3" title="What this measurement is not">
+      <Section title="What this measurement is not">
         <div className="max-w-prose">
           <Prose>
             <p>

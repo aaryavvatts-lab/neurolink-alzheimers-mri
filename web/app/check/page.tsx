@@ -7,10 +7,10 @@ export default function CheckPage() {
   return (
     <Page
       eyebrow="Tool 06"
-      title="Check your own dataset for the same mistake"
-      lede="Paste your file names. This works out what several of your files have in common, then tells you whether a plain random split would put the same patient, speaker or video on both sides of your train and test line."
+      title="Check your own dataset"
+      lede="The same mistake, in your data. Paste your file names. This works out what several of your files have in common, then tells you whether a plain random split would put the same patient, speaker or video on both sides of your train and test line."
     >
-      <Section n="1" title="Why this tool exists">
+      <Section title="Why this tool exists">
         <div className="max-w-prose">
           <Prose>
             <p>
@@ -34,11 +34,11 @@ export default function CheckPage() {
         </div>
       </Section>
 
-      <Section n="2" title="The checker">
+      <Section title="The checker">
         <LeakChecker />
       </Section>
 
-      <Section n="3" title="What it can and cannot tell you">
+      <Section title="What it can and cannot tell you">
         <div className="grid gap-8 md:grid-cols-2">
           <Prose>
             <p>

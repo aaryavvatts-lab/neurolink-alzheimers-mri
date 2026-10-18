@@ -30,7 +30,7 @@ export default function SliceAccuracy({ points }: { points: Pt[] }) {
           return (
             <g key={f}>
               <line x1={PAD.l} x2={W - PAD.r} y1={Y(v)} y2={Y(v)} stroke={C.grid} />
-              <text x={PAD.l - 8} y={Y(v) + 4} textAnchor="end" fontSize={11} fill={C.muted}>
+              <text x={PAD.l - 8} y={Y(v) + 4} textAnchor="end" fontSize={13} fill={C.muted}>
                 {Math.round(v * 100)}
               </text>
             </g>
@@ -39,11 +39,11 @@ export default function SliceAccuracy({ points }: { points: Pt[] }) {
         <path d={points.map((p, i) => `${i ? "L" : "M"}${X(p.slice)},${Y(p.accuracy)}`).join(" ")}
               fill="none" stroke={C.steel} strokeWidth={1.75} />
         <circle cx={X(best.slice)} cy={Y(best.accuracy)} r={4.5} fill={C.forest} />
-        <text x={X(best.slice)} y={Y(best.accuracy) - 10} textAnchor="middle" fontSize={11} fill={C.forest}>
+        <text x={X(best.slice)} y={Y(best.accuracy) - 10} textAnchor="middle" fontSize={13} fill={C.forest}>
           best at slice {best.slice}
         </text>
         {[x0, Math.round((x0 + x1) / 2), x1].map((v) => (
-          <text key={v} x={X(v)} y={H - PAD.b + 16} textAnchor="middle" fontSize={11} fill={C.muted}>
+          <text key={v} x={X(v)} y={H - PAD.b + 16} textAnchor="middle" fontSize={13} fill={C.muted}>
             {v}
           </text>
         ))}

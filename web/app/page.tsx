@@ -2,227 +2,190 @@
 
 import Link from "next/link";
 import { results as r } from "@/lib/results";
-import { TOOLS } from "@/lib/nav";
 import { fmt } from "@/lib/types";
-import { Callout, Prose, Ref, Section, Stat } from "@/components/ui";
+import { Callout, Prose, Ref } from "@/components/ui";
 import LeakageBars from "@/components/charts/LeakageBars";
+import Reveal from "@/components/Reveal";
+import Zoom from "@/components/Zoom";
+import ToolList from "@/components/ToolList";
 
+/* The object, large: one real slice from the public collection fills the first screen and the
+   page keeps coming back to it. Every number on this page is read from results.json. */
 export default function Home() {
   const lk = r.leakage_experiment;
   const probe = r.shortcut_probe;
   const run = r.primary_run ? r.runs[r.primary_run] : undefined;
   const d = r.dataset;
+  const leaky = lk ? (lk.leaky_random_split.balanced_accuracy * 100).toFixed(1) : null;
+  const honest = lk ? (lk.honest_subject_split_slice_level.balanced_accuracy * 100).toFixed(1) : null;
 
   return (
-    <div className="mx-auto max-w-wide px-5">
-      {/* ---------------- hero ---------------- */}
-      <header className="border-b border-rule py-14 sm:py-20">
-        <p className="mb-4 font-mono text-[0.75rem] uppercase tracking-[0.14em] text-muted">
-          A weekend project that did not go as planned
-        </p>
-        <h1 className="max-w-4xl text-[2.1rem] font-semibold leading-[1.12] sm:text-[3.1rem]">
-          I tried to read Alzheimer&apos;s stage from a brain scan.
-          <br className="hidden sm:block" />
-          <span className="text-brick"> Most of my accuracy was fake.</span>
-        </h1>
-        <p className="p-lede mt-6 max-w-2xl">
-          A short video said you could build this in a weekend. Grab 86,000 brain MRI images,
-          train a network, report your score. I did that, and the score was 99 percent. Then I
-          checked where the images came from, and almost all of that number fell apart.
-        </p>
-
-        <div className="mt-10 grid gap-x-6 gap-y-7 sm:grid-cols-2 lg:grid-cols-5">
-          {lk && (
-            <Stat tone="brick"
-                  value={`${(lk.leaky_random_split.balanced_accuracy * 100).toFixed(1)}%`}
-                  label="Score when the pictures are split at random"
-                  note="what the tutorial version reports" />
-          )}
-          {lk && (
-            <Stat tone="steel"
-                  value={`${(lk.honest_subject_split_slice_level.balanced_accuracy * 100).toFixed(1)}%`}
-                  label="Same model, split by patient instead"
-                  note="guessing scores 25%" />
-          )}
-          <Stat value={`${d.total_subjects}`}
-                label="People the data actually contains"
-                note={`not ${d.total_images.toLocaleString()} samples`} />
-          {probe && (
-            <Stat tone="brick"
-                  value={probe.margin_over_probe != null
-                    ? `+${(probe.margin_over_probe * 100).toFixed(1)}`
-                    : "n/a"}
-                  label="Points the entire brain was worth"
-                  note="against a control with the brain erased" />
-          )}
-          {run && (
-            <Stat tone="forest" value={fmt(run.subject_level.binary_screening.roc_auc, 2)}
-                  label="Dementia or not, per patient"
-                  note="the one thing that does work" />
-          )}
+    <>
+      {/* ---------------- the object, large ---------------- */}
+      <section className="hero" aria-label="Introduction">
+        <div className="hero__pic" aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/pictures/Non_OAS1_0007_128.png" alt="" width={1024} height={1024} fetchPriority="high" />
         </div>
-      </header>
-
-      {/* ---------------- what this is ---------------- */}
-      <Section n="1" id="what" title="What this is">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
-          <Prose>
-            <p>
-              A convolutional network that reads one flat slice of a brain scan and guesses which
-              of four dementia stages the person is at. It runs in your browser, on your machine,
-              and nothing you open is uploaded anywhere.
-            </p>
-            <p>
-              The model is the least interesting part. What this site is really about is the gap
-              between how well it appears to work and how well it does, and how easy it turned
-              out to be to end up on the wrong side of that gap without any warning.
-            </p>
-            <p>
-              Every number here is measured, every claim that came from somewhere else is cited,
-              and the results that made the project look worse are the ones on the front page.
-            </p>
-          </Prose>
-          <div className="space-y-4">
-            <Callout title="The one-line version">
-              86,437 pictures came from 347 people. Split the pictures instead of the people and
-              every one of those 347 lands in both the training and the test set, so the network
-              can score brilliantly by recognising faces it has already seen.
-            </Callout>
-            <Callout tone="warn" title="Not a medical tool">
-              A student project. No regulator has looked at it, no clinician has tested it, and
-              it should not inform anything about a real person.
-            </Callout>
+        <div className="wrap hero__text">
+          <h1 className="display lines">
+            <span className="line"><span data-line style={{ ["--i" as string]: 0 }}>Most of my</span></span>
+            <span className="line"><span data-line style={{ ["--i" as string]: 1 }}>accuracy was fake</span></span>
+          </h1>
+          <p className="lead" data-rise style={{ ["--i" as string]: 2 }}>
+            I tried to read Alzheimer&apos;s stage from a brain scan. A short video said you could
+            build this in a weekend. Grab 86,000 brain MRI images, train a network, report your
+            score. I did that, and the score was 99 percent. Then I checked where the images came
+            from, and almost all of that number fell apart.
+          </p>
+          <div className="hero__acts" data-rise style={{ ["--i" as string]: 3 }}>
+            <Link href="/try" className="button">Run the model on a scan</Link>
+            <a href="#findings" className="textbtn">What the split hid</a>
           </div>
         </div>
-      </Section>
+      </section>
+
+      {/* ---------------- the one-line version, with the slices inline ---------------- */}
+      <Reveal className="wrap statement" aria-label="The one-line version">
+        <p>
+          86,437 pictures
+          <span className="thumb" aria-hidden="true">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/samples/pre/Non_OAS1_0007_128.png" alt="" width={224} height={224} loading="lazy" />
+          </span>
+          came from 347 people
+          <span className="thumb" aria-hidden="true">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/samples/pre/Mild_OAS1_0052_123.png" alt="" width={224} height={224} loading="lazy" />
+          </span>
+          . Split the pictures instead of the people and all 347 land in both the training and the
+          test set
+          <span className="thumb" aria-hidden="true">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/samples/pre/Moderate_OAS1_0308_132.png" alt="" width={224} height={224} loading="lazy" />
+          </span>
+          .
+        </p>
+      </Reveal>
+
+      {/* ---------------- one frame, three distances ---------------- */}
+      <Zoom
+        src="/pictures/Verymild_OAS1_0060_134.png"
+        alt="One MRI slice through the head of a participant rated very mild, from the OASIS collection"
+        first="One slice,"
+        second="three distances"
+        caption="The dark butterfly shape near the middle is the lateral ventricles, two fluid-filled chambers. They widen as the tissue around them is lost, and that difference is most of what any model working on these scans has to go on."
+      />
 
       {/* ---------------- findings ---------------- */}
-      <Section n="2" id="findings" title="Three things worth knowing">
-        <div className="space-y-10">
-          {[
-            {
-              n: "01",
-              title: "Nearly all the accuracy came from the split, not the model",
-              body: (
-                <>
-                  <p>
-                    I trained the same network twice, identical in every way except whether the
-                    train and test piles were divided by picture or by patient. Balanced accuracy
-                    went from about 99 percent to about 34, which is barely above guessing.
-                  </p>
-                  <p>
-                    Yagis and colleagues measured roughly the same thing on this dataset in 2021,
-                    and showed a picture-level split still reports 96 percent even when the labels
-                    are shuffled into nonsense<Ref n={2} />.
-                  </p>
-                </>
-              ),
-              href: "/split",
-              cta: "Try the split simulator",
-            },
-            {
-              n: "02",
-              title: "Erasing the brain barely hurt it",
-              body: (
-                <>
-                  <p>
-                    I rubbed the brain out of every image, leaving skull and background, and
-                    trained again. There is nothing about dementia left in those pictures. It
-                    scored{" "}
-                    {probe ? fmt(probe.subject_level_balanced_accuracy) : "well above chance"}{" "}
-                    against 0.25 for guessing, and the best real model beat it by only{" "}
-                    {probe?.margin_over_probe != null
-                      ? `${(probe.margin_over_probe * 100).toFixed(1)} points`
-                      : "a little"}.
-                  </p>
-                  <p>
-                    Head size and skull shape change with age, and age drives dementia risk, so a
-                    model can ride that correlation without reading any tissue at all.
-                  </p>
-                </>
-              ),
-              href: "/findings#probe",
-              cta: "Read how the control was built",
-            },
-            {
-              n: "03",
-              title: "The small network beat the big pretrained one",
-              body: (
-                <>
-                  <p>
-                    Starting from a ResNet-18 that already knows about photographs is the standard
-                    move and is usually assumed to help. A plain network with a fifth of the
-                    parameters, trained from nothing, won on every measure here.
-                  </p>
-                  <p>
-                    With 242 people to learn from, the larger model mostly had more room to
-                    memorise. It also made the demo five times smaller to download.
-                  </p>
-                </>
-              ),
-              href: "/findings#pretraining",
-              cta: "See all four approaches compared",
-            },
-          ].map((f) => (
-            <article key={f.n} className="grid gap-5 border-t border-rule pt-7 md:grid-cols-[3rem_minmax(0,1fr)]">
-              <p className="font-mono text-[1.5rem] leading-none text-rule">{f.n}</p>
-              <div>
-                <h3 className="font-serif text-[1.3rem] leading-snug text-ink">{f.title}</h3>
-                <div className="prose-col mt-3 space-y-3 [&>p]:p-body">{f.body}</div>
-                <p className="mt-4">
-                  <Link href={f.href} className="link text-[0.875rem]">{f.cta}</Link>
-                </p>
-              </div>
-            </article>
-          ))}
+      <Reveal id="findings" className="wrap section">
+        <h2 className="head" style={{ marginBottom: "clamp(2rem, 4vw, 3rem)" }}>Three things worth knowing</h2>
+        <div className="findings">
+          <Reveal as="article" index={0}>
+            <h3>Nearly all the accuracy came from the split, not the model</h3>
+            <div className="prose-col">
+              <p className="p-body">
+                I trained the same network twice, identical in every way except whether the
+                train and test piles were divided by picture or by patient. Balanced accuracy
+                went from about 99 percent to about 34, which is barely above guessing.
+              </p>
+              <p className="p-body">
+                Yagis and colleagues measured roughly the same thing on this dataset in 2021,
+                and showed a picture-level split still reports 96 percent even when the labels
+                are shuffled into nonsense<Ref n={2} />.
+              </p>
+              <p className="mt-3"><Link href="/split" className="link">Try the split simulator</Link></p>
+            </div>
+          </Reveal>
+          <Reveal as="article" index={1}>
+            <h3>Erasing the brain barely hurt it</h3>
+            <div className="prose-col">
+              <p className="p-body">
+                I rubbed the brain out of every image, leaving skull and background, and
+                trained again. There is nothing about dementia left in those pictures. It
+                scored{" "}
+                {probe ? fmt(probe.subject_level_balanced_accuracy) : "well above chance"}{" "}
+                against 0.25 for guessing, and the best real model beat it by only{" "}
+                {probe?.margin_over_probe != null
+                  ? `${(probe.margin_over_probe * 100).toFixed(1)} points`
+                  : "a little"}.
+              </p>
+              <p className="p-body">
+                Head size and skull shape change with age, and age drives dementia risk, so a
+                model can ride that correlation without reading any tissue at all.
+              </p>
+              <p className="mt-3"><Link href="/findings#probe" className="link">Read how the control was built</Link></p>
+            </div>
+          </Reveal>
+          <Reveal as="article" index={2}>
+            <h3>The small network beat the big pretrained one</h3>
+            <div className="prose-col">
+              <p className="p-body">
+                Starting from a ResNet-18 that already knows about photographs is the standard
+                move and is usually assumed to help. A plain network with a fifth of the
+                parameters, trained from nothing, won on every measure here.
+              </p>
+              <p className="p-body">
+                With 242 people to learn from, the larger model mostly had more room to
+                memorise. It also made the demo five times smaller to download.
+              </p>
+              <p className="mt-3"><Link href="/findings#pretraining" className="link">See all four approaches compared</Link></p>
+            </div>
+          </Reveal>
         </div>
-
-        <div className="mt-10">
+        <div className="mt-12">
           <LeakageBars r={r} />
         </div>
-      </Section>
+      </Reveal>
 
-      {/* ---------------- tools ---------------- */}
-      <Section n="3" id="tools" title="Six things you can actually do here">
-        <div className="max-w-prose">
-          <Prose>
-            <p>
-              All of these run on your own machine. There is no server behind this site, so
-              nothing you open, drop in or paste is sent anywhere.
-            </p>
-          </Prose>
-        </div>
+      {/* ---------------- the figure on the picture's edge ---------------- */}
+      {leaky && honest && (
+        <section className="band" aria-label="The number that looked like success">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/pictures/Moderate_OAS1_0308_132.png" alt="A slice through the head of the one participant rated moderate who was held out of training" width={1024} height={1024} loading="lazy" decoding="async" />
+          <div className="wrap band__inner">
+            <h2 className="band__head">The number that looked like success</h2>
+            <div />
+            <div className="band__foot">
+              <p className="band__fig">{leaky}<sup>%</sup></p>
+              <p className="band__sent">
+                Balanced accuracy when the pictures are split at random, which is what the
+                tutorial version reports. The same model split by patient instead: {honest}%.
+                Guessing scores 25%.
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+      <Reveal className="wrap band__after" as="div">
+        <Reveal as="div" className="stat" index={0}>
+          <p className="n">{d.total_subjects}</p>
+          <p className="k">people the data actually contains, not {d.total_images.toLocaleString()} samples</p>
+        </Reveal>
+        {run && (
+          <Reveal as="div" className="stat" index={1}>
+            <p className="n text-forest">{fmt(run.subject_level.binary_screening.roc_auc, 2)}</p>
+            <p className="k">dementia or not, judged per patient. The one thing that does work.</p>
+          </Reveal>
+        )}
+      </Reveal>
 
-        <ul className="mt-8 divide-y divide-rule border-y border-rule">
-          {TOOLS.map(([href, name, desc], i) => (
-            <li key={href}>
-              <Link href={href}
-                    className="group grid gap-4 py-6 transition-colors hover:bg-white md:grid-cols-[3.5rem_minmax(0,18rem)_minmax(0,1fr)_5rem] md:items-baseline md:px-3">
-                <span className="font-mono text-[0.875rem] text-muted">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="font-serif text-[1.2rem] text-ink">{name}</span>
-                <span className="p-body">{desc}</span>
-                <span className="text-[0.8125rem] text-steel group-hover:underline md:text-right">
-                  Open
-                </span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-
-        <div className="mt-6 max-w-prose">
-          <Callout title="The last one is the useful one">
-            The first five are about this project. The checker is not. The mistake this whole
-            site is about is not specific to brain scans, and it works on any list of file names,
-            so if you take one thing away from here, take that.
-          </Callout>
-        </div>
-      </Section>
+      {/* ---------------- tools: sticky picture, active list ---------------- */}
+      <Reveal id="tools" className="wrap section">
+        <h2 className="head">Six things you can do here</h2>
+        <p className="p-body prose-col" style={{ marginTop: "1rem", marginBottom: "clamp(2rem, 4vw, 3rem)" }}>
+          All of these run on your own machine. There is no server behind this site, so
+          nothing you open, drop in or paste is sent anywhere. The first five are about this
+          project. The checker is not: the mistake this whole site is about works on any list
+          of file names, so if you take one thing away from here, take that.
+        </p>
+        <ToolList />
+      </Reveal>
 
       {/* ---------------- data ---------------- */}
-      <Section n="4" id="data" title="Where the data came from">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <Reveal id="data" className="wrap section twocol">
+        <h2 className="head">Where the data came from</h2>
+        <div className="twocol__a">
           <Prose>
             <p>
               The scans come from OASIS, an open collection released by Washington University in
@@ -239,31 +202,25 @@ export default function Home() {
               One of the four groups has two people in it. Not two hundred. Two.
             </p>
           </Prose>
-          <aside className="space-y-5">
-            {d.classes.map((c) => (
-              <div key={c.name} className="flex items-baseline justify-between border-b border-rule pb-2">
-                <div>
-                  <p className="text-[0.9375rem] text-ink">{c.short}</p>
-                  <p className="text-[0.75rem] text-muted">CDR {c.cdr}</p>
-                </div>
-                <div className="text-right">
-                  <p className={`tnum font-serif text-[1.25rem] ${c.subjects <= 3 ? "text-brick" : "text-ink"}`}>
-                    {c.subjects}
-                  </p>
-                  <p className="text-[0.75rem] text-muted">people</p>
-                </div>
-              </div>
-            ))}
-            <p className="text-[0.8125rem]">
-              <Link href="/data" className="link">More on the dataset</Link>
-            </p>
-          </aside>
         </div>
-      </Section>
+        <div className="classes self-start twocol__b">
+          {d.classes.map((c) => (
+            <div key={c.name}>
+              <div>
+                <p>{c.short}</p>
+                <p className="small" style={{ color: "var(--muted)" }}>CDR {c.cdr}</p>
+              </div>
+              <p className={`n ${c.subjects <= 3 ? "text-brick" : ""}`}>{c.subjects} <span className="small" style={{ color: "var(--muted)" }}>people</span></p>
+            </div>
+          ))}
+          <p><Link href="/data" className="link">More on the dataset</Link></p>
+        </div>
+      </Reveal>
 
       {/* ---------------- what works ---------------- */}
-      <Section n="5" id="works" title="So does anything work?">
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+      <Reveal id="works" className="wrap section twocol">
+        <h2 className="head">So does anything work?</h2>
+        <div className="twocol__a">
           <Prose>
             <p>
               Yes, but something smaller than I set out to do. Sorting patients into four stages
@@ -284,21 +241,27 @@ export default function Home() {
               gets hard for everyone.
             </p>
           </Prose>
-          {run && (
-            <aside className="grid gap-5 self-start sm:grid-cols-2 lg:grid-cols-1">
-              <Stat tone="forest" value={fmt(run.subject_level.binary_screening.roc_auc)}
-                    label="Dementia or not, judged per patient"
-                    note="1.0 perfect, 0.5 a coin flip" />
-              <Stat value={fmt(run.subject_level.quadratic_kappa)}
-                    label="Agreement with the clinician across four stages"
-                    note="counts a near miss better than a wild one" />
-              <p className="text-[0.8125rem]">
-                <Link href="/results" className="link">All the numbers</Link>
-              </p>
-            </aside>
-          )}
         </div>
-      </Section>
-    </div>
+        {run && (
+          <div className="figs self-start twocol__b">
+            <div>
+              <p className="n text-forest">{fmt(run.subject_level.binary_screening.roc_auc)}</p>
+              <p className="k">dementia or not, judged per patient. 1.0 is perfect, 0.5 a coin flip.</p>
+            </div>
+            <div>
+              <p className="n">{fmt(run.subject_level.quadratic_kappa)}</p>
+              <p className="k">agreement with the clinician across four stages. It counts a near miss better than a wild one.</p>
+            </div>
+            <div className="mt-2">
+              <Callout tone="warn" title="Not a medical tool">
+                A student project. No regulator has looked at it, no clinician has tested it, and
+                it should not inform anything about a real person.
+              </Callout>
+            </div>
+            <p><Link href="/results" className="link">All the numbers</Link></p>
+          </div>
+        )}
+      </Reveal>
+    </>
   );
 }

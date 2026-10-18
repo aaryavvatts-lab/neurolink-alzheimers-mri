@@ -8,14 +8,14 @@ export default function PatientsPage() {
   return (
     <Page
       eyebrow="Tool 04"
-      title="Every held-out patient, and what the model said about them"
-      lede="Aggregate numbers hide the shape of a model's mistakes. This is the whole test set, one row per person, so you can see exactly who it got right and how badly it missed the rest."
+      title="Every held-out patient"
+      lede="And what the model said about them. Aggregate numbers hide the shape of a model's mistakes. This is the whole test set, one row per person, so you can see exactly who it got right and how badly it missed the rest."
     >
-      <Section n="1" title="The test set">
+      <Section title="The test set">
         <PatientBrowser r={r} />
       </Section>
 
-      <Section n="2" title="What to look for">
+      <Section title="What to look for">
         <div className="grid gap-8 md:grid-cols-2">
           <Prose>
             <p>

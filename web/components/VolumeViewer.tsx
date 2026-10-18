@@ -34,7 +34,7 @@ function PlaneCanvas({
 
   return (
     <div>
-      <div className="relative border border-rule bg-black">
+      <div className="relative bg-black">
         <canvas
           ref={ref}
           className="block w-full"
@@ -42,7 +42,7 @@ function PlaneCanvas({
           aria-label={`${plane} view, position ${index + 1} of ${max}`}
         />
         {highlight !== undefined && plane === "axial" && (
-          <div className="pointer-events-none absolute inset-x-0 h-px bg-white/40"
+          <div className="pointer-events-none absolute inset-x-0 h-0.5 bg-paper/60"
                style={{ top: `${(highlight / max) * 100}%` }} />
         )}
       </div>
@@ -50,7 +50,7 @@ function PlaneCanvas({
         type="range" min={0} max={max - 1} value={index}
         onChange={(e) => onIndex(Number(e.target.value))}
         aria-label={`Move through the ${plane} view`}
-        className="mt-2 w-full accent-[#1D5B8F]"
+        className="mt-2 w-full accent-steel"
       />
     </div>
   );
@@ -117,7 +117,7 @@ function CutawayBox({ vol, ax, cor, sag }: {
           if (e.key === "ArrowUp") setRot((r) => ({ ...r, x: Math.min(85, r.x + step) }));
           if (e.key === "ArrowDown") setRot((r) => ({ ...r, x: Math.max(-85, r.x - step) }));
         }}
-        className="relative h-[340px] cursor-grab touch-none select-none overflow-hidden border border-rule bg-black active:cursor-grabbing"
+        className="relative h-[340px] cursor-grab touch-none select-none overflow-hidden bg-black active:cursor-grabbing"
         style={{ perspective: "900px" }}
       >
         <div className="absolute inset-0" style={{
@@ -136,7 +136,7 @@ function CutawayBox({ vol, ax, cor, sag }: {
                   style={style(`rotateY(90deg) translateZ(${(0.5 - sag / vol.meta.size) * S}px)`)} />
         </div>
 
-        <p className="pointer-events-none absolute bottom-2 left-3 text-[0.75rem] text-white/60">
+        <p className="pointer-events-none absolute bottom-2 left-3 text-small text-paper/80">
           drag to rotate
         </p>
       </div>
@@ -193,11 +193,11 @@ export default function VolumeViewer() {
           <button
             key={m.id} type="button" onClick={() => pick(m)} disabled={busy}
             aria-pressed={vol?.meta.id === m.id}
-            className={`border px-3 py-2 text-left text-[0.8125rem] transition ${
-              vol?.meta.id === m.id ? "border-ink bg-white" : "border-rule bg-white/60 hover:border-steel"
+            className={`border px-3 py-2 text-left text-small transition ${
+              vol?.meta.id === m.id ? "border-ink bg-card" : "bg-card hover:border-steel"
             } disabled:opacity-50`}
           >
-            <span className="block font-mono text-[0.75rem] text-muted">{m.subject}</span>
+            <span className="block text-small text-muted">{m.subject}</span>
             <span className="block" style={{ color: STAGE[m.label] }}>{m.label_name}</span>
           </button>
         ))}
@@ -220,13 +220,13 @@ export default function VolumeViewer() {
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
               {PLANES.map(([p, title, sub]) => (
                 <div key={p}>
-                  <p className="mb-1.5 text-[0.8125rem] font-medium text-ink">{title}</p>
+                  <p className="mb-1.5 text-small font-medium text-ink">{title}</p>
                   <PlaneCanvas
                     vol={vol} plane={p}
                     index={p === "axial" ? ax : p === "coronal" ? cor : sag}
                     onIndex={p === "axial" ? setAx : p === "coronal" ? setCor : setSag}
                   />
-                  <p className="mt-1 text-[0.6875rem] leading-snug text-muted">{sub}</p>
+                  <p className="mt-1 text-small leading-snug text-muted">{sub}</p>
                 </div>
               ))}
             </div>
@@ -235,11 +235,11 @@ export default function VolumeViewer() {
           {/* prediction through the head */}
           {profile && (
             <figure className="fig">
-              <figcaption className="border-b border-t-0 border-rule px-4 py-3">
-                <span className="font-sans text-[0.9375rem] font-medium text-ink">
+              <figcaption className="px-4 py-3">
+                <span className="font-sans text-body font-medium text-ink">
                   What the model says at each height
                 </span>
-                <p className="mt-1 text-[0.8125rem] text-muted">
+                <p className="mt-1 text-small text-muted">
                   One reading per slice, from the base of the skull up. Drag the axial slider
                   to move the marker.
                 </p>
@@ -252,7 +252,7 @@ export default function VolumeViewer() {
                       <line x1={profile.PAD.l} x2={profile.W - profile.PAD.r}
                             y1={profile.Y(v)} y2={profile.Y(v)} stroke={C.grid} />
                       <text x={profile.PAD.l - 6} y={profile.Y(v) + 4} textAnchor="end"
-                            fontSize={10} fill={C.muted}>{v * 100}</text>
+                            fontSize={13} fill={C.muted}>{v * 100}</text>
                     </g>
                   ))}
                   {[0, 1, 2, 3].map((cls) => (
@@ -262,16 +262,16 @@ export default function VolumeViewer() {
                   ))}
                   <line x1={profile.X(ax)} x2={profile.X(ax)} y1={profile.PAD.t}
                         y2={profile.PAD.t + profile.ih} stroke={C.ink} strokeDasharray="3 3" />
-                  <text x={profile.PAD.l} y={profile.H - 8} fontSize={10} fill={C.muted}>
+                  <text x={profile.PAD.l} y={profile.H - 8} fontSize={13} fill={C.muted}>
                     base of skull
                   </text>
                   <text x={profile.W - profile.PAD.r} y={profile.H - 8} textAnchor="end"
-                        fontSize={10} fill={C.muted}>top of head</text>
+                        fontSize={13} fill={C.muted}>top of head</text>
                 </svg>
 
                 <ul className="mt-3 flex flex-wrap gap-x-5 gap-y-1">
                   {SHORT.map((s, i) => (
-                    <li key={s} className="flex items-center gap-1.5 text-[0.75rem] text-body">
+                    <li key={s} className="flex items-center gap-1.5 text-small text-body">
                       <span className="inline-block h-2 w-3" style={{ background: STAGE[i] }} />
                       {s}
                       <span className="tnum text-muted">
@@ -285,21 +285,21 @@ export default function VolumeViewer() {
           )}
 
           <div className="grid gap-4 sm:grid-cols-3">
-            <div className="border-t-2 border-rule pt-3">
+            <div className="pt-3">
               <p className="p-small">Clinician said</p>
-              <p className="font-serif text-[1.25rem]" style={{ color: STAGE[vol.meta.label] }}>
+              <p className="font-serif text-lead" style={{ color: STAGE[vol.meta.label] }}>
                 {vol.meta.label_name}
               </p>
             </div>
-            <div className="border-t-2 border-rule pt-3">
+            <div className="pt-3">
               <p className="p-small">Model, averaged over all {vol.meta.depth} slices</p>
-              <p className="font-serif text-[1.25rem]" style={{ color: STAGE[vol.meta.volume_pred] }}>
+              <p className="font-serif text-lead" style={{ color: STAGE[vol.meta.volume_pred] }}>
                 {SHORT[vol.meta.volume_pred]}
               </p>
             </div>
-            <div className="border-t-2 border-rule pt-3">
+            <div className="pt-3">
               <p className="p-small">This slice alone</p>
-              <p className="font-serif text-[1.25rem]"
+              <p className="font-serif text-lead"
                  style={{ color: STAGE[vol.meta.per_slice_probs[ax].indexOf(Math.max(...vol.meta.per_slice_probs[ax]))] }}>
                 {SHORT[vol.meta.per_slice_probs[ax].indexOf(Math.max(...vol.meta.per_slice_probs[ax]))]}
               </p>

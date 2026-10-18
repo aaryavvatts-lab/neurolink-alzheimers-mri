@@ -214,18 +214,18 @@ export default function Demo() {
         >
           {agg && (
           <div className="fig p-5">
-            <div className="flex flex-wrap items-end justify-between gap-4 border-b border-rule pb-4">
+            <div className="flex flex-wrap items-end justify-between gap-4 pb-4">
               <div>
                 <p className="p-small">
                   Averaged over {agg.nSlices} images, the way a whole scan is scored
                 </p>
-                <p className="font-serif text-[1.75rem] font-semibold leading-tight"
+                <p className="font-serif text-lead font-semibold leading-tight"
                    style={{ color: STAGE[agg.pred] }}>
                   {FULL[agg.pred]}
                 </p>
               </div>
               <button type="button" onClick={downloadReport}
-                      className="border border-ink px-3 py-2 text-[0.8125rem] hover:bg-ink hover:text-white">
+                      className="button">
                 Download the full report
               </button>
             </div>
@@ -233,11 +233,11 @@ export default function Demo() {
             <ul className="mt-4 space-y-2.5">
               {agg.probs.map((p, i) => (
                 <li key={i}>
-                  <div className="flex justify-between text-[0.8125rem]">
+                  <div className="flex justify-between text-small">
                     <span className={i === agg.pred ? "text-ink" : "text-muted"}>{SHORT[i]}</span>
                     <span className="tnum text-muted">{(p * 100).toFixed(1)}%</span>
                   </div>
-                  <div className="mt-1 h-1.5 w-full bg-rule/70">
+                  <div className="mt-1 h-1.5 w-full bg-card">
                     <div className="h-1.5" style={{ width: `${Math.max(p * 100, 0.6)}%`, background: STAGE[i] }} />
                   </div>
                 </li>
@@ -245,20 +245,20 @@ export default function Demo() {
             </ul>
 
             <div className="mt-5 grid gap-4 sm:grid-cols-3">
-              <div className="border-t border-rule pt-2">
-                <p className="tnum font-serif text-[1.25rem] text-ink">
+              <div className="pt-2">
+                <p className="tnum font-serif text-lead text-ink">
                   {(agg.agreement * 100).toFixed(0)}%
                 </p>
                 <p className="p-small">of images voted this way on their own</p>
               </div>
-              <div className="border-t border-rule pt-2">
-                <p className="tnum font-serif text-[1.25rem] text-ink">
+              <div className="pt-2">
+                <p className="tnum font-serif text-lead text-ink">
                   {(agg.margin * 100).toFixed(0)} pts
                 </p>
                 <p className="p-small">ahead of {SHORT[agg.runnerUp]}, the next best answer</p>
               </div>
-              <div className="border-t border-rule pt-2">
-                <p className="tnum font-serif text-[1.25rem] text-ink">{agg.nSlices}</p>
+              <div className="pt-2">
+                <p className="tnum font-serif text-lead text-ink">{agg.nSlices}</p>
                 <p className="p-small">images read, in {(batch.reduce((s, x) => s + x.ms, 0) / 1000).toFixed(1)}s</p>
               </div>
             </div>
@@ -271,7 +271,7 @@ export default function Demo() {
             </div>
 
             <details className="mt-5">
-              <summary className="cursor-pointer text-[0.875rem] text-steel">
+              <summary className="cursor-pointer text-body text-steel">
                 Show what each image said on its own
               </summary>
               <div className="scroll-x mt-3">
@@ -282,7 +282,7 @@ export default function Demo() {
                   <tbody>
                     {batch.map((b) => (
                       <tr key={b.name}>
-                        <td className="pr-4 font-mono text-[0.75rem]">{b.name.slice(0, 40)}</td>
+                        <td className="pr-4 text-small">{b.name.slice(0, 40)}</td>
                         <td style={{ color: STAGE[b.pred] }}>{SHORT[b.pred]}</td>
                         <td className="text-right">{(b.probs[b.pred] * 100).toFixed(0)}%</td>
                       </tr>
@@ -303,22 +303,22 @@ export default function Demo() {
           ) : (
             <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">
               <canvas ref={canvasRef} className="hidden" />
-              <p className="text-[0.9375rem] text-body">
+              <p className="text-body text-body">
                 Drop a brain scan here, or several at once.
               </p>
-              <p className="text-[0.8125rem] text-muted">
+              <p className="text-small text-muted">
                 Drop a whole folder of slices from one scan and they are averaged into a
                 single answer, which is how every number on this site is measured.
               </p>
-              <p className="text-[0.8125rem] text-muted">
+              <p className="text-small text-muted">
                 Read on your own machine. Nothing is uploaded.
               </p>
             </div>
           )}
 
           {busy && (
-            <div className="absolute inset-0 flex items-center justify-center bg-white/80">
-              <p className="text-[0.875rem] text-body">
+            <div className="absolute inset-0 flex items-center justify-center bg-paper/80">
+              <p className="text-body text-body">
                 {progress ?? (status === "loading" ? `Getting the model ready (${msg})` : "Working")}
               </p>
             </div>
@@ -329,7 +329,7 @@ export default function Demo() {
           <button
             type="button"
             onClick={() => fileRef.current?.click()}
-            className="rounded border border-rule bg-white px-3 py-2 text-[0.875rem] hover:border-steel"
+            className="button button--quiet"
           >
             Choose files
           </button>
@@ -339,13 +339,13 @@ export default function Demo() {
             onChange={(e) => onFiles(e.target.files)}
           />
           {result && (
-            <label className="flex flex-1 items-center gap-3 rounded border border-rule bg-white px-3 py-2">
-              <span className="whitespace-nowrap text-[0.8125rem] text-muted">Attention</span>
+            <label className="flex flex-1 items-center gap-3 bg-card px-3 py-2">
+              <span className="whitespace-nowrap text-small text-muted">Attention</span>
               <input
                 type="range" min={0} max={1} step={0.05} value={overlay}
                 onChange={(e) => setOverlay(Number(e.target.value))}
                 aria-label="How strongly to draw the attention map over the scan"
-                className="w-full accent-[#1D5B8F]"
+                className="w-full accent-steel"
               />
             </label>
           )}
@@ -353,7 +353,7 @@ export default function Demo() {
 
         {source && (
           <p className="p-small">
-            Showing <span className="font-mono text-[0.8125rem]">{source}</span>
+            Showing <span className="text-small">{source}</span>
           </p>
         )}
       </div>
@@ -369,10 +369,10 @@ export default function Demo() {
 
         {result ? (
           <div className="fig p-5">
-            <div className="flex flex-wrap items-end justify-between gap-4 border-b border-rule pb-4">
+            <div className="flex flex-wrap items-end justify-between gap-4 pb-4">
               <div>
                 <p className="p-small">The model says</p>
-                <p className="font-serif text-[1.75rem] font-semibold leading-tight"
+                <p className="font-serif text-lead font-semibold leading-tight"
                    style={{ color: STAGE[result.pred] }}>
                   {FULL[result.pred]}
                 </p>
@@ -380,7 +380,7 @@ export default function Demo() {
               {active && (
                 <div className="text-right">
                   <p className="p-small">Clinician&apos;s label</p>
-                  <p className="text-[0.9375rem] text-body">{FULL[active.true_label]}</p>
+                  <p className="text-body text-body">{FULL[active.true_label]}</p>
                 </div>
               )}
             </div>
@@ -388,12 +388,12 @@ export default function Demo() {
             <ul className="mt-4 space-y-2.5">
               {result.probs.map((p, i) => (
                 <li key={i}>
-                  <div className="flex justify-between text-[0.8125rem]">
+                  <div className="flex justify-between text-small">
                     <span className={i === result.pred ? "text-ink" : "text-muted"}>{SHORT[i]}</span>
                     <span className="tnum text-muted">{(p * 100).toFixed(1)}%</span>
                   </div>
-                  <div className="mt-1 h-1.5 w-full bg-rule/70">
-                    <div className="h-1.5 transition-all"
+                  <div className="mt-1 h-1.5 w-full bg-card">
+                    <div className="h-1.5 transition-[width]"
                          style={{ width: `${Math.max(p * 100, 0.6)}%`, background: STAGE[i] }} />
                   </div>
                 </li>
@@ -408,7 +408,7 @@ export default function Demo() {
             {!agg && (
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <button type="button" onClick={downloadReport}
-                        className="border border-rule px-3 py-2 text-[0.8125rem] hover:border-steel">
+                        className="button button--quiet">
                   Download the full report
                 </button>
                 <span className="p-small">
@@ -441,7 +441,7 @@ export default function Demo() {
 
         {/* gallery */}
         <div className="fig p-5">
-          <p className="text-[0.9375rem] font-medium text-ink">Scans the model has never seen</p>
+          <p className="text-body font-medium text-ink">Scans the model has never seen</p>
           <p className="mt-1 p-small">
             One tile per patient, not per picture. A tick means the model agreed with the
             clinician, a cross means it did not. The moderate group has a single tile because
@@ -461,19 +461,19 @@ export default function Demo() {
                       onClick={() => run(s.raw, s, `${s.subject}, slice ${s.slice}`)}
                       disabled={busy}
                       className={`group relative block w-full overflow-hidden border transition ${
-                        active?.id === s.id ? "border-ink" : "border-rule hover:border-steel"
+                        active?.id === s.id ? "border-ink" : "hover:border-steel"
                       } disabled:opacity-50`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={s.pre} alt={`Scan from patient ${s.subject}, labelled ${s.true_name}`}
                            className="aspect-square w-full object-cover" />
-                      <span className="absolute left-0 top-0 px-1 py-0.5 text-[0.625rem] font-medium text-white"
+                      <span className="absolute left-0 top-0 px-1 py-0.5 text-small font-medium text-paper"
                             style={{ background: STAGE[s.true_label] }}>
                         {SHORT[s.true_label]}
                       </span>
-                      <span className="absolute right-0.5 top-0.5 text-[0.75rem] font-bold"
-                            style={{ color: ok ? "#2C6E4E" : "#A03027" }} aria-hidden="true">
-                        {ok ? "✓" : "✗"}
+                      <span className="absolute right-0.5 top-0.5 text-small font-bold"
+                            style={{ color: ok ? "var(--good)" : "var(--accent)" }} aria-hidden="true">
+                        {ok ? "yes" : "no"}
                       </span>
                       <span className="sr-only">{ok ? "model agreed" : "model disagreed"}</span>
                     </button>

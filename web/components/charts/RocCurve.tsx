@@ -28,7 +28,7 @@ export default function RocCurve({ points, auc, n }: {
       title="Catching dementia versus false alarms"
       note={`Each point is one cut-off for calling a scan abnormal. Measured on ${n} held-out patients.`}
       tools={
-        <span className="tnum text-[0.8125rem] text-muted">
+        <span className="tnum text-small text-muted">
           area under curve {auc === null ? "not measurable" : auc.toFixed(3)}
         </span>
       }
@@ -39,12 +39,12 @@ export default function RocCurve({ points, auc, n }: {
           {[0, 0.25, 0.5, 0.75, 1].map((v) => (
             <g key={v}>
               <line x1={PAD.l} x2={W - PAD.r} y1={Y(v)} y2={Y(v)} stroke={C.grid} />
-              <text x={PAD.l - 8} y={Y(v) + 4} textAnchor="end" fontSize={11} fill={C.muted}>{v * 100}</text>
-              <text x={X(v)} y={H - PAD.b + 16} textAnchor="middle" fontSize={11} fill={C.muted}>{v * 100}</text>
+              <text x={PAD.l - 8} y={Y(v) + 4} textAnchor="end" fontSize={13} fill={C.muted}>{v * 100}</text>
+              <text x={X(v)} y={H - PAD.b + 16} textAnchor="middle" fontSize={13} fill={C.muted}>{v * 100}</text>
             </g>
           ))}
           <line x1={X(0)} y1={Y(0)} x2={X(1)} y2={Y(1)} stroke={C.muted} strokeDasharray="4 3" />
-          <text x={X(0.62)} y={Y(0.52)} fontSize={11} fill={C.muted} transform={`rotate(-32 ${X(0.62)} ${Y(0.52)})`}>
+          <text x={X(0.62)} y={Y(0.52)} fontSize={13} fill={C.muted} transform={`rotate(-32 ${X(0.62)} ${Y(0.52)})`}>
             a coin flip
           </text>
 
@@ -71,14 +71,14 @@ export default function RocCurve({ points, auc, n }: {
           </text>
         </svg>
 
-        <div className="min-w-[190px] flex-1 border-l border-rule pl-5 text-[0.875rem]">
+        <div className="min-w-[190px] flex-1 pl-5 text-body">
           {cur ? (
             <>
               <p className="text-muted">At this cut-off:</p>
-              <p className="mt-2 tnum text-[1.5rem] font-semibold text-forest">{pct(cur.tpr, 0)}</p>
-              <p className="text-[0.8125rem] text-body">of patients with dementia are caught</p>
-              <p className="mt-3 tnum text-[1.5rem] font-semibold text-brick">{pct(cur.fpr, 0)}</p>
-              <p className="text-[0.8125rem] text-body">of healthy patients are wrongly flagged</p>
+              <p className="mt-2 tnum text-lead font-semibold text-forest">{pct(cur.tpr, 0)}</p>
+              <p className="text-small text-body">of patients with dementia are caught</p>
+              <p className="mt-3 tnum text-lead font-semibold text-brick">{pct(cur.fpr, 0)}</p>
+              <p className="text-small text-body">of healthy patients are wrongly flagged</p>
             </>
           ) : (
             <p className="text-muted">
